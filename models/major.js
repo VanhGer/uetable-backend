@@ -1,22 +1,22 @@
 import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../database/db.js";
 const Major = sequelize.define("Major", {
-    id: {
+    Id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true
 
     },
-    name: {
+    Name: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    code: {
+    Code: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    info: {
+    Info: {
       type: DataTypes.TEXT,
       allowNull: false
     }
