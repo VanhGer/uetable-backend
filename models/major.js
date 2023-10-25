@@ -1,4 +1,4 @@
-import { DataTypes, Sequelize } from "sequelize";
+import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
 const Major = sequelize.define("Major", {
     Id: {
@@ -21,7 +21,7 @@ const Major = sequelize.define("Major", {
       allowNull: false
     }
  }, {
-    timestamps: false,
+    // timestamps: false,
     raw: true
  });
 
