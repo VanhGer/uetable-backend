@@ -21,8 +21,7 @@ const Major = sequelize.define("Major", {
       allowNull: false
     }
  }, {
-    // timestamps: false,
-    raw: true
+    timestamps: false,
  });
 
  export default Major;

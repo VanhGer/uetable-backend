@@ -1,11 +1,15 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
-const Comment = sequelize.define("Comment", {
+const Documment = sequelize.define("Document", {
     Id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true
+    },
+    Name: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     CreatedAt: {
         type: DataTypes.DATE,
@@ -16,24 +20,32 @@ const Comment = sequelize.define("Comment", {
       defaultValue: 0,
       allowNull: false
     },
-    Content: {
+
+    Download: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false
+    },
+
+    Category: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    Link: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    Type: {
+    UserId: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    UserId: {
+    SubjectId: {
         type: DataTypes.INTEGER,
         allowNull: false
-    },
-    PreCommentId: {
-        type: DataTypes.INTEGER 
     }
 
  }, {
     timestamps: false
  });
 
- export default Comment;
+ export default Documment;

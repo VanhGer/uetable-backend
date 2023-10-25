@@ -1,39 +1,40 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
-const Comment = sequelize.define("Comment", {
+const Event= sequelize.define("Event", {
     Id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true
     },
-    CreatedAt: {
+    Name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+
+    TimeStart: {
         type: DataTypes.DATE,
         defaultValue: sequelize.literal('NOW()')
     },
-    Like: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false
+    TimeEnd: {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.literal('NOW()')
     },
-    Content: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    Type: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    UserId: {
-        type: DataTypes.INTEGER,
+
+    Location: {
+        type: DataTypes.STRING,
         allowNull: false
     },
-    PreCommentId: {
-        type: DataTypes.INTEGER 
-    }
 
+    Info: {
+        type: DataTypes.STRING,
+    },
+    ScheduleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
  }, {
     timestamps: false
  });
 
- export default Comment;
+ export default Event;
