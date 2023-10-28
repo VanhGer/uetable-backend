@@ -2,6 +2,8 @@ import express from 'express'
 import 'dotenv/config'
 import MajorRouter from './routes/major.js'
 import CommentRouter from './routes/comment.js'
+import UserRouter from './routes/user.js'
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -11,7 +13,8 @@ app.get('/', (req, res) => {
 })
 
 app.use('/', MajorRouter);
-app.use('/', CommentRouter); 
+app.use('/', CommentRouter);
+app.use('/', UserRouter);
 
 
 app.listen(PORT, () => console.log(`Your server is running successfully on port ${PORT}`))
