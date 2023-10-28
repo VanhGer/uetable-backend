@@ -1,5 +1,6 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
+import Subject from "./subject.js";
 const Class = sequelize.define("Class", {
     Id: {
       type: DataTypes.INTEGER,
@@ -28,7 +29,7 @@ const Class = sequelize.define("Class", {
         type: DataTypes.STRING,
         allowNull: false
     },
-    Info: {
+    Teacher: {
         type: DataTypes.STRING
     },
     SubjectId: {
@@ -39,5 +40,5 @@ const Class = sequelize.define("Class", {
 }, {
     timestamps: false,
 });
-
+Class.belongsTo(Subject);
 export default Class;

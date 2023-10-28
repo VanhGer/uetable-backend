@@ -1,5 +1,6 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
+
 const Event= sequelize.define("Event", {
     Id: {
       type: DataTypes.INTEGER,
