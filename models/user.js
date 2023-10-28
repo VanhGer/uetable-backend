@@ -1,5 +1,7 @@
 import { DataTypes} from "sequelize";
-import sequelize from "../database/db.js";
+import sequelize from "../database/db.js"
+import bcrypt from 'bcrypt'
+
 const User = sequelize.define("User", {
     Id: {
       type: DataTypes.INTEGER,
@@ -20,6 +22,7 @@ const User = sequelize.define("User", {
     },
     Birth: {
         type: DataTypes.DATE,
+        defaultValue: sequelize.literal('NOW()')
     },
     StudentId: {
         type: DataTypes.STRING
@@ -42,8 +45,20 @@ const User = sequelize.define("User", {
     Avatar: {
         type: DataTypes.TEXT
     }
- }, {
-    timestamps: false
- });
+ },
+ {
+    timestamps: false,
+    hooks: {
+        beforeCreate: (User) => {
+          const salt = bcrypt.genSaltSync(10)
+          User.PasswordHash = bcrypt.hashSync(User.PasswordHash, salt)
+        },
+      }
+ }
+);
+
+ User.prototype.validatePassword = function (plainText) {
+    return bcrypt.compareSync(plainText, this.PasswordHash)
+  }
 
  export default User;
