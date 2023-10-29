@@ -3,13 +3,22 @@ import Class from "../models/class.js";
 import Event from "../models/event.js";
 import sequelize from "../database/db.js";
 import Subject from "../models/subject.js";
-
+import { Op } from "sequelize";
 function changeStyle(list) {
     
 }
 
 export const getScheduleInWeek = async (req, res) => {
     try {
+        const currentDate = new Date();
+        const currentDayOfWeek = currentDate.getDay();
+        const difference = currentDayOfWeek - 0;
+        const firstDayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - difference);
+
+        const lastDayOfWeek = new Date(firstDayOfWeek.getFullYear(), firstDayOfWeek.getMonth(), firstDayOfWeek.getDate() + 6);
+        console.log('First day of the week:', firstDayOfWeek);
+        console.log('Last day of the week:', lastDayOfWeek);
+
         const { params } = req
         const sche = await Schedule.findOne({
             where: {
@@ -21,6 +30,17 @@ export const getScheduleInWeek = async (req, res) => {
             raw: true,
             where: {
                 ScheduleId: scheId,
+                [Op.or]: [
+                    {
+                        day: {
+                            [Op.between]: [firstDayOfWeek, lastDayOfWeek]
+                        }
+                        
+                    }, 
+                    {
+                        day: null
+                    }
+                ]
             },
             include: {
                 model: Class,
