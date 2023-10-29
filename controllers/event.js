@@ -1,23 +1,20 @@
-import Event from "../models/event";
+import Event from "../models/event.js";
 
-
-async function getEventById(userId) {
-    
-}
 
 export const createEvent = async (req, res) => {
     try {
         const newEvent = await Event.create({
-            Content: req.body.content,
-            Type: req.body.type,
-            UserId: req.body.userId,
-            PreCommentId: req.body.preCommentId
+            Name: req.body.name,
+            TimeStart: req.body.timeStart,
+            TimeEnd: req.body.timeEnd,
+            Location: req.body.location,
+            Info: req.body.info,
+            day: req.body.day,
+            color: req.body.color,
+            ScheduleId: req.body.scheduleId,
         });
-        await newComment.save();
-        res.status(200).json("notexist");
-        
-
-        res.status(200).json(eventListRes);
+        await newEvent.save();
+        res.status(200).json("create successfully");
     } catch (err) {
         res.status(500).json(err.message);
     }

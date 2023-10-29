@@ -4,19 +4,23 @@ import Event from "../models/event.js";
 import sequelize from "../database/db.js";
 import Subject from "../models/subject.js";
 
-export const getSchedule = async (req, res) => {
+function changeStyle(list) {
+    
+}
+
+export const getScheduleInWeek = async (req, res) => {
     try {
-        let userId = req.query.userId;
+        const { params } = req
         const sche = await Schedule.findOne({
             where: {
-                UserId: userId 
+                UserId: params.id
             }
         });
         let scheId = sche.UserId;
         const eventList = await Event.findAll({
             raw: true,
             where: {
-                ScheduleId: scheId
+                ScheduleId: scheId,
             },
             include: {
                 model: Class,
@@ -25,16 +29,23 @@ export const getSchedule = async (req, res) => {
                 }
             },
             attributes: [
-                'Id', 'Name', 'TimeStart', 'TimeEnd', 'Location', 'Info', 
-                [sequelize.col('Classes.Code'), 'ClassNum'],
-                [sequelize.col('Classes.Teacher'), 'Teacher'],
-                [sequelize.col('Classes.Subject.Code'), 'CourseCode'],
+                'id', 'name', 'timeStart', 'timeEnd', 'day', 'location', 'info', 'color',
+                [sequelize.col('Classes.Code'), 'classCode'],
+                [sequelize.col('Classes.Teacher'), 'teacher'],
+                [sequelize.col('Classes.number'), 'number'],
+                [sequelize.col('Classes.group'), 'group'],
+                [sequelize.col('Classes.weekday'), 'weekday'],
+                [sequelize.col('Classes.lessonStart'), 'lessonStart'],
+                [sequelize.col('Classes.lessonEnd'), 'lessonEnd'],
+                [sequelize.col('Classes.Subject.Credit'), 'credit'],
             ]
         });
-        console.log(eventList);
-        const eventListRes = eventList.map(({ Id, Name, TimeStart, TimeEnd, Location, Info, 
-        ClassNum, Teacher, CourseCode}) => ({ Id, Name, TimeStart, TimeEnd, Location, Info, 
-            ClassNum, Teacher, CourseCode }));
+        //console.log(eventList);
+        //res.status(200).json(eventList);
+        const eventListRes = eventList.map(({id, name, timeStart, timeEnd, day, location, info, color,
+            classCode, teacher, number, group, weekday, lessonStart, lessonEnd, creadit}) => ({ id, name, 
+            timeStart, timeEnd, day, location, info, color, classCode, teacher, number, group, 
+            weekday, lessonStart, lessonEnd, creadit }));
 
         res.status(200).json(eventListRes);
     } catch (err) {

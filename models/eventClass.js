@@ -1,7 +1,6 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
-import Class from "./class.js";
-import Event from "./event.js";
+
 const EventClass= sequelize.define("EventClass", {
     Id: {
       type: DataTypes.INTEGER,
@@ -23,5 +22,6 @@ const EventClass= sequelize.define("EventClass", {
  });
 
 
-Event.belongsToMany(Class, {through: EventClass});
+//Event.belongsToMany(Class, {through: 'EventClass'});
+//Class.belongsToMany(Event, {through: EventClass});
  export default EventClass;

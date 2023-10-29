@@ -17,12 +17,12 @@ const Class = sequelize.define("Class", {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    TimeStart: {
-      type: DataTypes.DATE,
+    lessonStart: {
+      type: DataTypes.TIME,
       allowNull: false
     },
-    TimeEnd: {
-      type: DataTypes.DATE,
+    lessonEnd: {
+      type: DataTypes.TIME,
       allowNull: false
     },
     Location: {
@@ -32,6 +32,21 @@ const Class = sequelize.define("Class", {
     Teacher: {
         type: DataTypes.STRING
     },
+
+    weekDay: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    number: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    group: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+
     SubjectId: {
         type: DataTypes.INTEGER,
         allowNull: false,

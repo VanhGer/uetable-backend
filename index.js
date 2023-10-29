@@ -4,6 +4,7 @@ import MajorRouter from './routes/major.js'
 import CommentRouter from './routes/comment.js'
 import UserRouter from './routes/user.js'
 import ScheduleRouter from './routes/schedule.js'
+import EventRouter from './routes/event.js'
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use('/', MajorRouter);
 app.use('/', CommentRouter);
 app.use('/', UserRouter);
 app.use('/', ScheduleRouter);
+app.use('/', EventRouter);
 
 
 app.listen(PORT, () => console.log(`Your server is running successfully on port ${PORT}`))

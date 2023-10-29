@@ -1,8 +1,8 @@
 import express from 'express'
-import {getScheduleInWeek} from '../controllers/schedule.js';
+import { createEvent } from '../controllers/event.js';
 import { auth } from '../middlewares/auth.js'
 const router = express.Router();
 
 
-router.route('/getSchedule/:id').get(getScheduleInWeek)
+router.route('/createEvent').post(createEvent);
 export default router;

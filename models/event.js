@@ -1,6 +1,7 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
-
+import Class from "./class.js";
+import EventClass from "./eventClass.js";
 const Event= sequelize.define("Event", {
     Id: {
       type: DataTypes.INTEGER,
@@ -14,12 +15,12 @@ const Event= sequelize.define("Event", {
     },
 
     TimeStart: {
-        type: DataTypes.DATE,
-        defaultValue: sequelize.literal('NOW()')
+        type: DataTypes.TIME,
+        allowNull: false,
     },
     TimeEnd: {
-        type: DataTypes.DATE,
-        defaultValue: sequelize.literal('NOW()')
+        type: DataTypes.TIME,
+        allowNull: false,
     },
 
     Location: {
@@ -30,6 +31,15 @@ const Event= sequelize.define("Event", {
     Info: {
         type: DataTypes.STRING,
     },
+
+    day: {
+        type: DataTypes.DATE
+    },
+    color: {
+        type: DataTypes.STRING,
+        defaultValue: "#ff0000"
+    },
+
     ScheduleId: {
         type: DataTypes.INTEGER,
         allowNull: false
@@ -37,5 +47,5 @@ const Event= sequelize.define("Event", {
  }, {
     timestamps: false
  });
-
+ Event.belongsToMany(Class, {through: 'EventClass'});
  export default Event;
