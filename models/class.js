@@ -56,4 +56,5 @@ const Class = sequelize.define("Class", {
     timestamps: false,
 });
 Class.belongsTo(Subject);
+Subject.hasMany(Class);
 export default Class;

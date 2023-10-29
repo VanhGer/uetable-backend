@@ -4,5 +4,5 @@ import { auth } from '../middlewares/auth.js'
 const router = express.Router();
 
 
-router.route('/getSchedule/:id').get(getScheduleInWeek)
+router.route('/getScheduleInWeek/:id').get(getScheduleInWeek)
 export default router;
