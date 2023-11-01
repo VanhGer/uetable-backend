@@ -43,7 +43,6 @@ export const getSubjectInfo = async (req, res) => {
             },
             include: {
                 model: Class,
-                
             },
             
         }) 

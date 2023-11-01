@@ -8,6 +8,11 @@ const Subject = sequelize.define("Subject", {
       primaryKey: true
 
     },
+
+    PageType: {
+        type: DataTypes.CHAR,
+        defaultValue: 'S'
+    },
     Name: {
       type: DataTypes.STRING,
       allowNull: false
@@ -16,7 +21,7 @@ const Subject = sequelize.define("Subject", {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    Name: {
+    Credit: {
         type: DataTypes.INTEGER,
         allowNull: false
     },

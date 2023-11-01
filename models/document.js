@@ -7,6 +7,11 @@ const Documment = sequelize.define("Document", {
       autoIncrement: true,
       primaryKey: true
     },
+
+    PageType: {
+        type: DataTypes.CHAR,
+        defaultValue: 'D'
+    },
     Name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -18,13 +23,11 @@ const Documment = sequelize.define("Document", {
     Like: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
-      allowNull: false
     },
 
     Download: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
-        allowNull: false
     },
 
     Category: {
