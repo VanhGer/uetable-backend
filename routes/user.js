@@ -4,22 +4,23 @@ import {
   addUser,
   modifyUser,
   deleteUser, 
-  getUsersById, 
+  getUsersByStudentId, 
   authenticateUser,
+  changePassword
 } from '../controllers/user.js'
 import { auth } from '../middlewares/auth.js'
 
 const router = express.Router()
 
 router
-  .route('/users')
+  .route('/api/users')
   .get(auth, getUserHandles)
   .post(addUser)
   .put(auth, modifyUser)
   .delete(auth, deleteUser)
 
-router.route('/users/authenticate').post(authenticateUser)
-router.route('/users/:id').get(auth, getUsersById)
-
+router.route('/api/users/authenticate').post(authenticateUser)
+router.route('/api/users/:studentid').get(auth, getUsersByStudentId)
+router.route('/api/users/change-password/').post(auth, changePassword)
 
 export default router;

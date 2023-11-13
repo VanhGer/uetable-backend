@@ -6,6 +6,7 @@ export default class UserDTO {
     return {
       id: user.Id,
       name: user.Name,
+      studentId: user.StudentId,
       date: user.Birth,
       avatar: user.Avatar ? user.Avatar : null,
     }

@@ -1,6 +1,6 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
-const UserLike = sequelize.define("UserLike", {
+const PageComment = sequelize.define("PageComment", {
     Id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -11,12 +11,14 @@ const UserLike = sequelize.define("UserLike", {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    UserId: {
+
+    PageId: {
         type: DataTypes.INTEGER,
         allowNull: false
     }
+
  }, {
     timestamps: false
  });
 
-export default UserLike;
+ export default PageComment;

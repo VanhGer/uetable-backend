@@ -5,7 +5,7 @@ export default class UserHandleDTO {
     static convertToDto(user) {
         return {
             userId: user.Id,
-            email: user.Email,
+            studentId: user.StudentId,
         }
     }
 }

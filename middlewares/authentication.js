@@ -22,8 +22,16 @@ export default class Authentication {
         // sent by frontend as 'Bearer <token>'
         if (authToken.startsWith('Bearer ')) {
             const splitToken = authToken.split(' ')
-            const decoded = jwt.verify(splitToken[1], this.privateKey())
-            return JSON.parse(decoded.data)
+            try{
+                const decoded = jwt.verify(splitToken[1], this.privateKey())
+                console.log(decoded)
+                return JSON.parse(decoded.data)
+            } catch(error) {
+                res.status(401).send({
+                    error: 'Incorrect Token',
+                })
+            }
+            
         }
         throw new Error('Authorization header was not Bearer')
     }
