@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
--- Host: mysql-2a9c5153-uetable.a.aivencloud.com    Database: defaultdb
+-- Host: mysql-2a9c5153-uetable.a.aivencloud.com    Database: fall2324w3g4_uetable
 -- ------------------------------------------------------
 -- Server version	8.0.30
 
@@ -89,7 +89,7 @@ CREATE TABLE Comments (
   CONSTRAINT Comments_chk_1 CHECK ((`PageType` = _utf8mb4'C'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+ALTER DATABASE fall2324w3g4_uetable CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -115,7 +115,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+ALTER DATABASE fall2324w3g4_uetable CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 
 --
 -- Table structure for table `Documents`
@@ -145,7 +145,7 @@ CREATE TABLE Documents (
   CONSTRAINT Documents_chk_1 CHECK ((`PageType` = _utf8mb4'D'))
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+ALTER DATABASE fall2324w3g4_uetable CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -171,7 +171,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+ALTER DATABASE fall2324w3g4_uetable CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 
 --
 -- Table structure for table `EventClasses`
@@ -313,7 +313,7 @@ CREATE TABLE Reports (
   CONSTRAINT Reports_chk_1 CHECK ((`PageType` = _utf8mb4'R'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+ALTER DATABASE fall2324w3g4_uetable CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -339,7 +339,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+ALTER DATABASE fall2324w3g4_uetable CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 
 --
 -- Table structure for table `Schedules`
@@ -379,7 +379,7 @@ CREATE TABLE Subjects (
   CONSTRAINT Subjects_chk_1 CHECK ((`PageType` = _utf8mb4'S'))
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+ALTER DATABASE fall2324w3g4_uetable CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -405,7 +405,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+ALTER DATABASE fall2324w3g4_uetable CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 
 --
 -- Table structure for table `UserLike`
@@ -489,11 +489,11 @@ CREATE TABLE Users (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping events for database 'defaultdb'
+-- Dumping events for database 'fall2324w3g4_uetable'
 --
 
 --
--- Dumping routines for database 'defaultdb'
+-- Dumping routines for database 'fall2324w3g4_uetable'
 --
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 
