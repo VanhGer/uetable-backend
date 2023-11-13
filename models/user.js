@@ -17,9 +17,6 @@ const User = sequelize.define("User", {
         type: DataTypes.STRING,
         allowNull: false
     },
-    Email: {
-        type: DataTypes.STRING
-    },
     Birth: {
         type: DataTypes.DATE,
         defaultValue: sequelize.literal('NOW()')
@@ -37,6 +34,10 @@ const User = sequelize.define("User", {
         defaultValue: 0,
         allowNull: false
     },
+    Status: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: 0,
+    },
     Credits: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
@@ -49,7 +50,7 @@ const User = sequelize.define("User", {
  {
     timestamps: false,
     hooks: {
-        beforeCreate: (User) => {
+        beforeUpdate: (User) => {
           const salt = bcrypt.genSaltSync(10)
           User.PasswordHash = bcrypt.hashSync(User.PasswordHash, salt)
         },
