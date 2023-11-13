@@ -13,13 +13,12 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
-SET @@SESSION.SQL_LOG_BIN= 0;
 
 --
--- GTID state at the beginning of the backup 
+-- GTID state at the beginning of the backup
 --
 
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '098bd538-772b-11ee-9e61-02086ca3dcfc:1-381';
+
 
 --
 -- Table structure for table `Auths`
@@ -34,7 +33,7 @@ CREATE TABLE Auths (
   CreateAt date NOT NULL,
   PRIMARY KEY (StudentId),
   CONSTRAINT Auths_ibfk_1 FOREIGN KEY (StudentId) REFERENCES Users (StudentId)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -59,7 +58,7 @@ CREATE TABLE Classes (
   PRIMARY KEY (Id),
   KEY SubjectId (SubjectId),
   CONSTRAINT Classes_ibfk_1 FOREIGN KEY (SubjectId) REFERENCES Subjects (Id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,15 +88,15 @@ CREATE TABLE Comments (
   CONSTRAINT Comments_ibfk_4 FOREIGN KEY (PreCommentId) REFERENCES Comments (Id),
   CONSTRAINT Comments_ibfk_5 FOREIGN KEY (Id, PageType) REFERENCES Pages (PageId, PageType) ON DELETE CASCADE,
   CONSTRAINT Comments_chk_1 CHECK ((`PageType` = _utf8mb4'C'))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4-general-ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4-general-ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
@@ -145,15 +144,15 @@ CREATE TABLE Documents (
   CONSTRAINT Documents_ibfk_3 FOREIGN KEY (SubjectId) REFERENCES Subjects (Id),
   CONSTRAINT Documents_ibfk_4 FOREIGN KEY (Id, PageType) REFERENCES Pages (PageId, PageType) ON DELETE CASCADE,
   CONSTRAINT Documents_chk_1 CHECK ((`PageType` = _utf8mb4'D'))
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4-general-ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4-general-ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
@@ -191,7 +190,7 @@ CREATE TABLE EventClasses (
   KEY ClassId (ClassId),
   CONSTRAINT EventClasses_ibfk_1 FOREIGN KEY (EventId) REFERENCES `Events` (Id),
   CONSTRAINT EventClasses_ibfk_2 FOREIGN KEY (ClassId) REFERENCES Classes (Id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,7 +213,7 @@ CREATE TABLE `Events` (
   PRIMARY KEY (Id),
   KEY ScheduleId (ScheduleId),
   CONSTRAINT Events_ibfk_1 FOREIGN KEY (ScheduleId) REFERENCES Schedules (Id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -230,7 +229,7 @@ CREATE TABLE Majors (
   `Code` varchar(255) NOT NULL,
   Info text NOT NULL,
   PRIMARY KEY (Id)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -251,7 +250,7 @@ CREATE TABLE PageComments (
   CONSTRAINT PageComments_ibfk_2 FOREIGN KEY (CommentId) REFERENCES Comments (Id),
   CONSTRAINT PageComments_ibfk_3 FOREIGN KEY (PageId, PageType) REFERENCES Pages (PageId, PageType),
   CONSTRAINT PageComments_chk_1 CHECK ((`PageType` in (_utf8mb4'D',_utf8mb4'S',_utf8mb4'R')))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -272,7 +271,7 @@ CREATE TABLE PageReports (
   CONSTRAINT PageReports_ibfk_2 FOREIGN KEY (ReportId) REFERENCES Reports (Id),
   CONSTRAINT PageReports_ibfk_3 FOREIGN KEY (PageId, PageType) REFERENCES Pages (PageId, PageType),
   CONSTRAINT PageReports_chk_1 CHECK ((`PageType` in (_utf8mb4'D',_utf8mb4'S',_utf8mb4'R')))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -289,7 +288,7 @@ CREATE TABLE Pages (
   PRIMARY KEY (PageId,PageType),
   UNIQUE KEY `page_super-key` (PageId,PageType),
   CONSTRAINT Pages_chk_1 CHECK ((`PageType` in (_utf8mb4'D',_utf8mb4'S',_utf8mb4'R',_utf8mb4'C')))
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -313,15 +312,15 @@ CREATE TABLE Reports (
   CONSTRAINT Reports_ibfk_2 FOREIGN KEY (UserId) REFERENCES Users (Id),
   CONSTRAINT Reports_ibfk_3 FOREIGN KEY (Id, PageType) REFERENCES Pages (PageId, PageType) ON DELETE CASCADE,
   CONSTRAINT Reports_chk_1 CHECK ((`PageType` = _utf8mb4'R'))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4-general-ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4-general-ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
@@ -356,7 +355,7 @@ CREATE TABLE Schedules (
   PRIMARY KEY (Id),
   KEY UserId (UserId),
   CONSTRAINT Schedules_ibfk_1 FOREIGN KEY (UserId) REFERENCES Users (Id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -379,15 +378,15 @@ CREATE TABLE Subjects (
   CONSTRAINT Subjects_ibfk_2 FOREIGN KEY (MajorId) REFERENCES Majors (Id),
   CONSTRAINT Subjects_ibfk_3 FOREIGN KEY (Id, PageType) REFERENCES Pages (PageId, PageType) ON DELETE CASCADE,
   CONSTRAINT Subjects_chk_1 CHECK ((`PageType` = _utf8mb4'S'))
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+ALTER DATABASE defaultdb CHARACTER SET utf8mb4 COLLATE utf8mb4-general-ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4-general-ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
@@ -422,7 +421,7 @@ CREATE TABLE UserLike (
   UserId int NOT NULL,
   PRIMARY KEY (UserId),
   CONSTRAINT UserLike_ibfk_1 FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -443,7 +442,7 @@ CREATE TABLE UserLikes (
   CONSTRAINT UserLikes_ibfk_1 FOREIGN KEY (CommentId) REFERENCES Comments (Id),
   CONSTRAINT UserLikes_ibfk_2 FOREIGN KEY (UserId) REFERENCES Users (Id),
   CONSTRAINT UserLikes_chk_1 CHECK ((`Score` in (_utf8mb4'1',_utf8mb4'-1')))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -464,7 +463,7 @@ CREATE TABLE UserScores (
   KEY SubjectId (SubjectId),
   CONSTRAINT UserScores_ibfk_1 FOREIGN KEY (UserId) REFERENCES Users (Id),
   CONSTRAINT UserScores_ibfk_2 FOREIGN KEY (SubjectId) REFERENCES Subjects (Id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -487,7 +486,7 @@ CREATE TABLE Users (
   `Status` tinyint(1) DEFAULT '0',
   PRIMARY KEY (Id),
   UNIQUE KEY StudentId (StudentId)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4-general-ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
