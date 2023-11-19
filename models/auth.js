@@ -9,7 +9,7 @@ const Auth = sequelize.define("Auth", {
       primaryKey: true
     },
     CodeHash: {
-        type: DataTypes.STRING,
+        type: DataTypes.NUMBER,
         allowNull: false
     },
     CreateAt: {
@@ -19,16 +19,10 @@ const Auth = sequelize.define("Auth", {
  },
  {
     timestamps: false,
-    hooks: {
-        beforeUpdate: (Auth) => {
-          const salt = bcrypt.genSaltSync(10)
-          Auth.CodeHash = bcrypt.hashSync(User.CodeHash, salt)
-        },
-      }
  }
 );
 
- User.prototype.validateCode = function (plainText) {
+ Auth.prototype.validateCode = function (plainText) {
     return bcrypt.compareSync(plainText, this.CodeHash)
   }
 

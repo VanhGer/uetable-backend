@@ -4,18 +4,18 @@ import Authentication from '../middlewares/authentication.js'
 import UserDTO from '../dto/users.js'
 import UserHandleDTO from '../dto/userHandle.js'
 import { Op } from 'sequelize'
-import crypto from crypto
-import HTML_TEMPLATE from "./mail-template.js";
-import SENDMAIL from "./email.js" 
+import nodemailer from "nodemailer";
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 
-export const addUser = async (req, res) => {
+export const registerUser = async (req, res) => {
     try {
-        const { body } = req
+        const { name, studentid, password } = req.body;
 
         const duplicateStudentId = await User.findOne({
             where: {
-                StudentId: body.studentid,
+                StudentId: studentid,
             },
         })
 
@@ -24,51 +24,79 @@ export const addUser = async (req, res) => {
             return
         }
 
-        const createUser = await User.create({
-            Name: body.name,
-            StudentId: body.studentid,
-            PasswordHash: body.password,
+        const token = jwt.sign({ name, studentid, password }, process.env.JWT_SECRET, { expiresIn: '30m' });
+        const output = `
+        <h2>Please click on below link to activate your account</h2>
+        <p>${process.env.CLIENT_URL}/api/activate/${token}</p>
+        <p><b>NOTE: </b> The above activation link expires in 30 minutes.</p>
+        `;
+        const transporter = nodemailer.createTransport({
+            service: process.env.EMAIL_SERVICE,
+            host: process.env.EMAIL_HOST,
+            port: process.env.EMAIL_PORT,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USERNAME,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        const mailName = studentid + "@" + process.env.EMAIL_ORG
+
+        const mailOptions = {
+            from: process.env.EMAIL_USERNAME, // sender address
+            to: mailName, // receiver email
+            subject: "Account Verification on UETable", // Subject line
+            text: output,
+            html: output,
+        }
+
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                console.log('Mail sent : %s', info.response);
+            }
         })
-        const authToken = Authentication.generateAuthToken(createUser)
+
         res.status(201).send({
-            message: 'User successfully created',
-            authToken,
-            StudentId: createUser.StudentId,
+            message: 'Email send successfully',
+            StudentId: studentid,
         })
     } catch (error) {
         res.status(500).send(error)
     }
 }
 
-export const emailVerification = async (req, res) => {
+export const activateAccount = async (req, res) => {
+    const token = req.params.token;
     try {
-        const { body } = req
-        let user = await User.findOne({
-            StudentId: body.studentid,
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+        const { name, studentid, password } = decodedToken;
+        const duplicateStudentId = await User.findOne({
+            where: {
+                StudentId: studentid,
+            },
         })
 
-        if (user) 
-            return res.status(400).send("User with given email already verification!");
-
-        let token = await new Auth({
-            StudentId: body.studentid,
-            CodeHash: Math.floor(1000 + Math.random() * 9000),     
-        }).save();
-        const message = token.CodeHash
-        const options = {
-            from: "uetable@gmail.com", // sender address
-            to: "21020076@vnu.edu.vn", // receiver email
-            subject: "UETable Open Now!", // Subject line
-            text: message,
-            html: HTML_TEMPLATE(message),
+        if (duplicateStudentId) {
+            res.status(409).send({ error: 'StudentId has already been taken' })
+            return
         }
-
-        SENDMAIL(options, (info) => {
-            console.log("Email sent successfully");
-            console.log("MESSAGE ID: ", info.messageId);
-        });
-
-
+        const createUser = await User.create({
+            Name: name,
+            StudentId: studentid,
+            PasswordHash: password,
+        })
+        const salt = bcrypt.genSaltSync(10)
+        createUser.PasswordHash = bcrypt.hashSync(createUser.PasswordHash, salt)
+        createUser.save()
+        res.status(201).send({
+            message: 'User successfully created',
+            StudentId: createUser.StudentId,
+        })
     } catch (error) {
         res.status(500).send(error)
     }
