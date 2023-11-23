@@ -8,6 +8,8 @@ import {
   authenticateUser,
   changePassword,
   activateAccount,
+  resetPassword,
+  forgotPassword,
 } from '../controllers/user.js'
 import { auth } from '../middlewares/auth.js'
 
@@ -20,8 +22,10 @@ router
   .put(auth, modifyUser)
   .delete(auth, deleteUser)
 
-router.route('/api/activate/:token').get(activateAccount)
-router.route('/api/users/authenticate').post(authenticateUser)
+router.route('/api/users/activate/:token').get(activateAccount)
+router.route('/api/users/forgot-password/').post(forgotPassword)
+router.route('/api/users/reset/:token').post(resetPassword)
+router.route('/api/users/auth').post(authenticateUser)
 router.route('/api/users/:studentid').get(auth, getUsersByStudentId)
 router.route('/api/users/change-password/').post(auth, changePassword)
 

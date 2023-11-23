@@ -25,7 +25,7 @@ export default class Authentication {
             try{
                 const decoded = jwt.verify(splitToken[1], this.privateKey())
                 console.log(decoded)
-                return decoded;
+                return JSON.parse(decoded.data)
             } catch(error) {
                 res.status(401).send({
                     error: 'Incorrect Token',
