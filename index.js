@@ -7,9 +7,11 @@ import ScheduleRouter from './routes/schedule.js'
 import EventRouter from './routes/event.js'
 import SubjectRouter from './routes/subject.js'
 import DocumentRouter from './routes/document.js'
+import cors from 'cors';
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors())
 const PORT = process.env.PORT;
 app.get('/', (req, res) => {
     res.send('Hello World!')
