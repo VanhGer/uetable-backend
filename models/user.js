@@ -49,16 +49,11 @@ const User = sequelize.define("User", {
  },
  {
     timestamps: false,
-    hooks: {
-        beforeUpdate: (User) => {
-          const salt = bcrypt.genSaltSync(10)
-          User.PasswordHash = bcrypt.hashSync(User.PasswordHash, salt)
-        },
-      }
  }
 );
 
  User.prototype.validatePassword = function (plainText) {
+    console.log(plainText, this.PasswordHash)
     return bcrypt.compareSync(plainText, this.PasswordHash)
   }
 

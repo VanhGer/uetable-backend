@@ -5,7 +5,7 @@ import UserDTO from '../dto/users.js'
 import UserHandleDTO from '../dto/userHandle.js'
 import { Op } from 'sequelize'
 import nodemailer from "nodemailer";
-import jwt from 'jsonwebtoken'
+import jwt, { decode } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 
@@ -27,7 +27,7 @@ export const registerUser = async (req, res) => {
         const token = jwt.sign({ name, studentid, password }, process.env.JWT_SECRET, { expiresIn: '30m' });
         const output = `
         <h2>Please click on below link to activate your account</h2>
-        <p>${process.env.CLIENT_URL}/api/activate/${token}</p>
+        <p>${process.env.CLIENT_URL}/api/users/activate/${token}</p>
         <p><b>NOTE: </b> The above activation link expires in 30 minutes.</p>
         `;
         const transporter = nodemailer.createTransport({
@@ -128,6 +128,98 @@ export const getUserHandles = async (req, res) => {
     }
 }
 
+export const forgotPassword = async (req, res) => {
+    try {
+        const { studentid } = req.body;
+
+        if (!studentid) {
+            res.status(409).send({ error: 'Please enter an student id' })
+        }
+
+        const studentHandle = await User.findOne({
+            where: {
+                StudentId: studentid,
+            },
+        })
+
+        if (!studentHandle) {
+            res.status(409).send({ error: 'StudentId does not exist!' })
+            return
+        }
+
+        const token = jwt.sign({studentid:  studentid}, process.env.JWT_SECRET, { expiresIn: '30m' });
+        const output = `
+        <h2>Please click on below link to reset your account password</h2>
+        <p>${process.env.CLIENT_URL}/api/users/reset/${token}</p>
+        <p><b>NOTE: </b> The above activation link expires in 30 minutes.</p>
+        `;
+        const transporter = nodemailer.createTransport({
+            service: process.env.EMAIL_SERVICE,
+            host: process.env.EMAIL_HOST,
+            port: process.env.EMAIL_PORT,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USERNAME,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        const mailName = studentid + "@" + process.env.EMAIL_ORG
+
+        const mailOptions = {
+            from: process.env.EMAIL_USERNAME, // sender address
+            to: mailName, // receiver email
+            subject: "Forget Password on UETable", // Subject line
+            text: output,
+            html: output,
+        }
+
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                console.log('Mail sent : %s', info.response);
+            }
+        })
+
+        res.status(201).send({
+            message: 'Email send successfully',
+            StudentId: studentid,
+        })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+
+export const resetPassword = async (req, res) => {
+    try {
+        console.log(req.body)
+        const token = req.params.token;
+        const { password } = req.body;
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+        console.log(decodedToken)
+        const { studentid } = decodedToken;
+        const salt = bcrypt.genSaltSync(10)
+        const passwordHash = bcrypt.hashSync(password, salt)
+        const updatedUser = await User.update(
+            {
+                PasswordHash: passwordHash
+            },
+            { returning: true, where: { StudentId: studentid } }
+        )
+        if (updatedUser) {
+            res.status(200).send({ message: 'The password has been updated.' })
+        } else {
+            res.status(500).send({ error: 'Failed to update the password.' })
+        }
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
 
 export const getUsersByStudentId = async (req, res) => {
     try {
@@ -185,7 +277,7 @@ export const modifyUser = async (req, res) => {
         // console.log(loggedInUser)
         const { body } = req
 
-        // console.log(body)
+        // console.log(loggedInUser.Id)
 
         const updatedUser = await User.update(
             {
@@ -227,35 +319,31 @@ export const deleteUser = async (req, res) => {
 export const changePassword = async (req, res) => {
     try {
         const { body } = req
-        if (body.oldpassword == body.newpassword) {
-            res.status(401).send({message: 'The old password and new password are the same.'})
-        }
-
+        console.log(body)
         const user = await User.findOne({
             where: {
                 StudentId: body.studentid,
             },
         })
-
-        if (!user || !user.validatePassword(body.password)) {
+        if (!user || !user.validatePassword(body.oldpassword)) {
             res.status(401).send({
-                error: 'Incorrect studentid or password',
+                error: 'Incorrect old password',
             })
             return
         }
+        
+        if (body.oldpassword == body.newpassword) {
+            res.status(401).send({message: 'The old password and new password are the same.'})
+        }
 
-        const authToken = Authentication.generateAuthToken(user)
-        res.status(200).send({
-            message: 'Authentication successful',
-            authToken,
-            studentid: user.studentid,
-        })
-        const loggedInUser = res.locals.decodedUser
+        const salt = bcrypt.genSaltSync(10)
+        const passwordHash = bcrypt.hashSync(body.newpassword, salt)
+        // console.log(passwordHash)
         const updatedUser = await User.update(
             {
-                PasswordHash: body.password
+                PasswordHash: passwordHash
             },
-            { returning: true, where: { Id: loggedInUser.Id } }
+            { returning: true, where: { StudentId: body.studentid } }
         )
         if (updatedUser) {
             res.status(200).send({ message: 'The password has been updated.' })
