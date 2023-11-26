@@ -18,11 +18,11 @@ const Class = sequelize.define("Class", {
         allowNull: false
     },
     lessonStart: {
-      type: DataTypes.TIME,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     lessonEnd: {
-      type: DataTypes.TIME,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     Location: {

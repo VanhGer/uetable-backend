@@ -12,7 +12,7 @@ export const auth = (req, res, next) => {
         } else {
             const decodedUser = Authentication.extractUser(authToken)
             console.log(decodedUser)
-            if (!decodedUser.Id)
+            if (!decodedUser.Id) {
                 res.status(401).json({
                     error: new Error('Invalid auth token'),
                 })
