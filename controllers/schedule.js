@@ -10,22 +10,24 @@ function changeStyle(list) {
 
 export const getScheduleInWeek = async (req, res) => {
     try {
-        const currentDate = new Date();
-        const currentDayOfWeek = currentDate.getDay();
-        const difference = currentDayOfWeek - 0;
-        const firstDayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - difference);
+        const today = new Date();
+        const firstDayOfWeek = new Date(
+            today.setDate(today.getDate() - today.getDay()),
+        );
 
-        const lastDayOfWeek = new Date(firstDayOfWeek.getFullYear(), firstDayOfWeek.getMonth(), firstDayOfWeek.getDate() + 6);
+        const lastDayOfWeek = new Date(
+            today.setDate(today.getDate() - today.getDay() + 6),
+        );
         console.log('First day of the week:', firstDayOfWeek);
         console.log('Last day of the week:', lastDayOfWeek);
 
-        const { params } = req
+        const user = res.locals.decodedUser;
         const sche = await Schedule.findOne({
             where: {
-                UserId: params.id
+                UserId: user.Id
             }
         });
-        let scheId = sche.UserId;
+        let scheId = sche.Id;
         const eventList = await Event.findAll({
             raw: true,
             where: {

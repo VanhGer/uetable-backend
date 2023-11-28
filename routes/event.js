@@ -4,5 +4,5 @@ import { auth } from '../middlewares/auth.js'
 const router = express.Router();
 
 
-router.route('/createEvent').post(createEvent);
+router.route('/api/event/createEvent').post(auth, createEvent);
 export default router;
