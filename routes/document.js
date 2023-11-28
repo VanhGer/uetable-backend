@@ -1,5 +1,3 @@
-
-
 import express from 'express'
 import { createDocument } from "../controllers/document.js";
 import { docUpload } from '../middlewares/cloud.js';
