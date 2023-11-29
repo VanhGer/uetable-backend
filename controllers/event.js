@@ -25,3 +25,28 @@ export const createEvent = async (req, res) => {
         res.status(500).json(err.message);
     }
 }
+
+export const deleteEventById = async (req, res) => {
+    try {
+        const user = res.locals.decodedUser;
+        const sche = await Schedule.findOne({
+            where: {
+                UserId: user.Id,
+            }
+        });
+        let {params} = req;
+        let curEvent = await Event.findOne({
+            where: {Id: params.id}
+        });
+        if (curEvent.ScheduleId != sche.Id) {
+            res.status(403).json("Do not have permission!")
+        } else {
+            await curEvent.destroy();
+            res.status(200).json("Delete successfully")
+        }
+ 
+
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+}

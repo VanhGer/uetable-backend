@@ -1,12 +1,12 @@
 import Schedule from "../models/Schedule.js";
 import Class from "../models/class.js";
 import Event from "../models/event.js";
+import EventClass from "../models/eventClass.js";
 import sequelize from "../database/db.js";
 import Subject from "../models/subject.js";
 import { Op } from "sequelize";
-function changeStyle(list) {
-    
-}
+import { getCoursebyStudentId } from "../middlewares/crawlCourse.js";
+import { START_TERM_DAY, END_TERM_DAY } from "../constant.js";
 
 export const getScheduleInWeek = async (req, res) => {
     try {
@@ -16,7 +16,7 @@ export const getScheduleInWeek = async (req, res) => {
         );
 
         const lastDayOfWeek = new Date(
-            today.setDate(today.getDate() - today.getDay() + 6),
+            today.setDate(today.getDate() - today.getDay() + 7),
         );
         console.log('First day of the week:', firstDayOfWeek);
         console.log('Last day of the week:', lastDayOfWeek);
@@ -70,6 +70,107 @@ export const getScheduleInWeek = async (req, res) => {
             weekday, lessonStart, lessonEnd, creadit }));
 
         res.status(200).json(eventListRes);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+}
+
+function trimClass(str) {
+    let tmp = str.replace(" (CLC)", "");
+    let words = tmp.split(" ");
+    if (words.length == 2) return tmp;
+    let res = tmp.replace(/\s+/, "");
+    return res;
+}
+
+function getDays(start, end, weekDay) {
+    let currentDate = new Date(start), cur = new Date(start);
+    let res = [];
+
+    while (currentDate <= end) {
+      if (currentDate.getDay() === weekDay) {
+        cur = currentDate;
+        break;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    while (cur <= end) {
+        let tmp = new Date(cur);
+        res.push(tmp);
+        cur.setDate(cur.getDate() + 7);
+    }
+    return res;
+}
+
+function lessonToTime(lesson) {
+    let cur = lesson + 6;
+    let str = cur + "";
+    if (cur < 10) {
+        str = "0" + cur;
+    }
+    return str + ":00:00";
+}
+
+export const autoCreateEventClass = async (req, res) => {
+    try {
+        const user = res.locals.decodedUser;
+        const sche = await Schedule.findOne({
+            where: {
+                UserId: user.Id,
+            }
+        });
+        const classList = await getCoursebyStudentId(user.StudentId);
+        let classInfo = [];
+        for (let i = 0; i < classList.length; i++) {
+            let classCode = trimClass(classList[i].class);
+            const cur = await Class.findAll({
+                raw: true,
+                where: {
+                    Code: classCode, 
+                    [Op.or]: [
+                        {
+                            group: "CL"
+                            
+                        }, 
+                        {
+                            group: classList[i].group
+                        }
+                    ]
+                }
+            })
+            for (let j = 0; j < cur.length; j++) {
+                classInfo.push(cur[j]);
+            }
+        }
+        for (let cla of classInfo) {
+            let wD = (cla.weekDay - 1) % 7; 
+            let days = getDays(new Date(START_TERM_DAY), new Date(END_TERM_DAY), wD);
+            for (let dayy of days) {
+                const newEvent = await Event.create({
+                    Name: cla.Name,
+                    TimeStart: lessonToTime(cla.lessonStart),
+                    TimeEnd: lessonToTime(cla.lessonEnd + 1),
+                    Location: cla.Location,
+                    Info: cla.Teacher,
+                    day: dayy,
+                    ScheduleId: sche.Id,
+                });
+                await newEvent.save();
+                let newEventId = newEvent.Id;
+                const newClassEvent = await EventClass.create({
+                    EventId: newEventId,
+                    ClassId: cla.Id
+                });
+                await newClassEvent.save();
+
+            }
+            
+            console.log(cla);
+        }
+
+       
+        res.status(200).json("create successfully");
     } catch (err) {
         res.status(500).json(err.message);
     }
