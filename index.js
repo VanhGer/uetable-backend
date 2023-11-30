@@ -14,6 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 const PORT = process.env.PORT;
 app.get('/', (req, res) => {
+    const ipAddress = req.connection.remoteAddress
+    const ipPort = req.connection.remotePort
+    console.log(ipAddress);
+    console.log(ipPort);
     res.send('Hello World!')
 })
 
