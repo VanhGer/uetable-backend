@@ -14,6 +14,8 @@ export const registerUser = async (req, res) => {
         const { name, studentid, password } = req.body;
         const ipAddress = req.connection.remoteAddress
         const ipPort = req.connection.remotePort
+        const url = req.headers.host;
+        console.log(url);
         const duplicateStudentId = await User.findOne({
             where: {
                 StudentId: studentid,
@@ -28,7 +30,7 @@ export const registerUser = async (req, res) => {
         const token = jwt.sign({ name, studentid, password }, process.env.JWT_SECRET, { expiresIn: '30m' });
         const output = `
         <h2>Please click on below link to activate your account</h2>
-        <p>${ipAddress}:${ipPort}/activate?token=${token}</p>
+        <p>${url}/activate?token=${token}</p>
         <p><b>NOTE: </b> The above activation link expires in 30 minutes.</p>
         `;
         const transporter = nodemailer.createTransport({
