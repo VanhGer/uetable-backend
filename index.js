@@ -8,10 +8,13 @@ import EventRouter from './routes/event.js'
 import SubjectRouter from './routes/subject.js'
 import DocumentRouter from './routes/document.js'
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
+app.use(cookieParser());
 const PORT = process.env.PORT;
 app.get('/', (req, res) => {
     // const ipAddress = req.connection.remoteAddress
