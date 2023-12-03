@@ -264,9 +264,16 @@ export const authenticateUser = async (req, res) => {
         }
 
         const authToken = Authentication.generateAuthToken(user)
+        res.cookie('authToken', authToken, {
+            httpOnly: true,
+            secure: false,
+            path: "/",
+            sameSite: "strict",
+            expires: new Date(253402300000000)
+        })
         res.status(200).send({
             message: 'Authentication successful',
-            authToken,
+            // authToken,
             studentid: user.studentid,
         })
     } catch (error) {
@@ -286,7 +293,7 @@ export const modifyUser = async (req, res) => {
             {
                 Name: body.name,
                 Avatar: body.avatar,
-                Birth: body.birth,  
+                Birth: body.birth,
             },
             { returning: true, where: { Id: loggedInUser.Id } }
         )
@@ -334,7 +341,7 @@ export const changePassword = async (req, res) => {
             })
             return
         }
-        
+
         if (body.oldpassword == body.newpassword) {
             res.status(401).send({message: 'The old password and new password are the same.'})
         }

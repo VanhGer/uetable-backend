@@ -2,7 +2,8 @@ import Authentication from './authentication.js'
 
 export const auth = (req, res, next) => {
     try {
-        const authToken = req.get('Authorization')
+        // const authToken = req.get('Authorization')
+        const authToken = req.cookies.authToken;
         // console.log(authToken)
         if (!authToken) {
             res.status(400).json({
@@ -11,10 +12,10 @@ export const auth = (req, res, next) => {
             return
         } else {
             const decodedUser = Authentication.extractUser(authToken)
-            console.log(decodedUser)
-            if (!decodedUser.Id) {
+            console.log({decodedUser})
+            if (!decodedUser?.Id) {
                 res.status(401).json({
-                    error: new Error('Invalid auth token'),
+                    error: 'Invalid auth token',
                 })
                 return
             }
@@ -23,9 +24,10 @@ export const auth = (req, res, next) => {
             res.locals.decodedUser = decodedUser
             next()
         }
-    } catch {
+    } catch (e) {
+        console.log(e)
         res.status(401).json({
-            error: new Error('Invalid request!'),
+            error: 'Invalid request!',
         })
         return
     }
