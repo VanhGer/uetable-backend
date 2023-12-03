@@ -2,12 +2,12 @@ import Authentication from './authentication.js'
 
 export const auth = (req, res, next) => {
     try {
-        // const authToken = req.get('Authorization')
-        const authToken = req.cookies.authToken;
+        const authToken = req.get('Authorization')
+        // const authToken = req.cookies.authToken;
         // console.log(authToken)
         if (!authToken) {
             res.status(400).json({
-                error: new Error('Auth token not provided'),
+                error: 'Auth token not provided',
             })
             return
         } else {
@@ -25,7 +25,6 @@ export const auth = (req, res, next) => {
             next()
         }
     } catch (e) {
-        console.log(e)
         res.status(401).json({
             error: 'Invalid request!',
         })

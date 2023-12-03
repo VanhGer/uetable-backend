@@ -264,16 +264,16 @@ export const authenticateUser = async (req, res) => {
         }
 
         const authToken = Authentication.generateAuthToken(user)
-        res.cookie('authToken', authToken, {
-            httpOnly: true,
-            secure: false,
-            path: "/",
-            sameSite: "strict",
-            expires: new Date(253402300000000)
-        })
+        // res.cookie('authToken', authToken, {
+        //     httpOnly: true,
+        //     secure: false,
+        //     path: "/",
+        //     sameSite: "strict",
+        //     expires: new Date(253402300000000)
+        // })
         res.status(200).send({
             message: 'Authentication successful',
-            // authToken,
+            authToken,
             studentid: user.studentid,
         })
     } catch (error) {
