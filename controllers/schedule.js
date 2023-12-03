@@ -6,7 +6,7 @@ import sequelize from "../database/db.js";
 import Subject from "../models/subject.js";
 import { Op } from "sequelize";
 import { getCoursebyStudentId } from "../middlewares/crawlCourse.js";
-import { START_TERM_DAY, END_TERM_DAY } from "../constant.js";
+import { START_CUR_TERM_DAY, END_CUR_TERM_DAY } from "../constant.js";
 
 export const getScheduleInWeek = async (req, res) => {
     try {
@@ -145,7 +145,7 @@ export const autoCreateEventClass = async (req, res) => {
         }
         for (let cla of classInfo) {
             let wD = (cla.weekDay - 1) % 7; 
-            let days = getDays(new Date(START_TERM_DAY), new Date(END_TERM_DAY), wD);
+            let days = getDays(new Date(START_CUR_TERM_DAY), new Date(END_CUR_TERM_DAY), wD);
             for (let dayy of days) {
                 const newEvent = await Event.create({
                     Name: cla.Name,
