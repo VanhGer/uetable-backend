@@ -153,7 +153,7 @@ export const forgotPassword = async (req, res) => {
         const token = jwt.sign({studentid:  studentid}, process.env.JWT_SECRET, { expiresIn: '30m' });
         const output = `
         <h2>Please click on below link to reset your account password</h2>
-        <p>${process.env.CLIENT_URL}/api/users/reset/${token}</p>
+        <p>${process.env.CLIENT_URL}/resetpassword?token=${token}</p>
         <p><b>NOTE: </b> The above activation link expires in 30 minutes.</p>
         `;
         const transporter = nodemailer.createTransport({
