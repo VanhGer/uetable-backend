@@ -7,8 +7,10 @@ import ScheduleRouter from './routes/schedule.js'
 import EventRouter from './routes/event.js'
 import SubjectRouter from './routes/subject.js'
 import DocumentRouter from './routes/document.js'
+import ScoreRouter from './routes/score.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+
 
 const app = express();
 app.use(express.json());
@@ -32,5 +34,6 @@ app.use('/', ScheduleRouter);
 app.use('/', EventRouter);
 app.use('/', SubjectRouter);
 app.use('/', DocumentRouter);
+app.use('/', ScoreRouter);
 
 app.listen(PORT, () => console.log(`Your server is running successfully on port ${PORT}`))
