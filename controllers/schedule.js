@@ -18,8 +18,8 @@ export const getScheduleInWeek = async (req, res) => {
         const lastDayOfWeek = new Date(
             today.setDate(today.getDate() - today.getDay() + 7),
         );
-        console.log('First day of the week:', firstDayOfWeek);
-        console.log('Last day of the week:', lastDayOfWeek);
+        // console.log('First day of the week:', firstDayOfWeek);
+        // console.log('Last day of the week:', lastDayOfWeek);
 
         const user = res.locals.decodedUser;
         const sche = await Schedule.findOne({
