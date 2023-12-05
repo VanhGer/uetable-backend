@@ -11,7 +11,7 @@ export default class Authentication {
             { data: JSON.stringify(user) },
             this.privateKey(),
             {
-                expiresIn: '1d',
+                expiresIn: '1m',
                 algorithm: 'HS256',
             }
         )
@@ -27,12 +27,13 @@ export default class Authentication {
                 console.log(decoded)
                 return JSON.parse(decoded.data)
             } catch(error) {
-                res.status(401).send({
-                    error: 'Incorrect Token',
-                })
+                if (error instanceof jwt.TokenExpiredError) {
+                    return 'Token Expired'
+                } else {
+                    return 'Incorrect Token'
+                }
             }
-
         }
-        throw new Error('Authorization header was not Bearer')
+        return 'Authorization header was not Bearer'
     }
 }
