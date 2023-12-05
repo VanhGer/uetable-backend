@@ -200,7 +200,10 @@ export async function getUserGPAById(id) {
         total4 += c.total4 * c.Credit;
         cres += c.Credit;
     }
-    return {gpa10: (total10/cres), gpa4: (total4/cres)};
+    if (cres == 0) {
+        return {credits: 0, gpa10: 0, gpa4: 0};
+    }
+    else return {credits: cres, gpa10: (total10/cres), gpa4: (total4/cres)};
 }
 
 export const getUserGPA = async (req, res) => {
