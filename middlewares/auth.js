@@ -12,15 +12,28 @@ export const auth = (req, res, next) => {
             return
         } else {
             const decodedUser = Authentication.extractUser(authToken)
-            console.log({decodedUser})
-            if (!decodedUser?.Id) {
+            // console.log({decodedUser})
+            if (decodedUser === 'Token Expired') {
+                res.status(401).json({
+                    error: 'Auth token expired',
+                })
+                return
+            } else if (decodedUser === 'Incorrect Token') {
+                res.status(401).json({
+                    error: 'Incorrect auth token',
+                })
+                return
+            } if (decodedUser === 'Authorization header was not Bearer') {
+                res.status(401).json({
+                    error: 'Bearer auth token not provided',
+                })
+                return
+            } else if (!decodedUser?.Id) {
                 res.status(401).json({
                     error: 'Invalid auth token',
                 })
                 return
             }
-            // console.log(decodedUser)
-
             res.locals.decodedUser = decodedUser
             next()
         }
