@@ -19,7 +19,10 @@ const Score = sequelize.define("Score", {
     finalExamWeight: {
         type: DataTypes.FLOAT
     },
-    total: {
+    total10: {
+        type: DataTypes.FLOAT
+    },
+    total4: {
         type: DataTypes.FLOAT
     },
     Status: {
