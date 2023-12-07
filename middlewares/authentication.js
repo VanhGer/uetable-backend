@@ -11,7 +11,7 @@ export default class Authentication {
             { data: JSON.stringify(user) },
             this.privateKey(),
             {
-                expiresIn: '1m',
+                expiresIn: '1d',
                 algorithm: 'HS256',
             }
         )
