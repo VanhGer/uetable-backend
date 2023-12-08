@@ -2,6 +2,7 @@ import UserScore from "../models/userScore.js";
 import Score from "../models/score.js";
 import Subject from "../models/subject.js";
 import Semester from "../models/semester.js";
+import { Op } from "sequelize";
 import sequelize from "../database/db.js";
 
 async function semesterInfoById(userId, id) {
@@ -21,10 +22,11 @@ async function semesterInfoById(userId, id) {
         result.title = sem.Name;
         result.subjects = [];
         result.sumOfCredits = 0;
-        result.semesterGPAscale10 = 0.0;
-        result.semesterGPAscale4 = 0.0;
+        result.semesterGPA = 0.0;
+        // result.semesterGPAscale4 = 0.0;
         result.totalMark10 = 0.0;
-        result.totalMark4 = 0.0
+        result.cnt = 0.0;
+        // result.totalMark4 = 0.0
         let data = await UserScore.findAll({
             raw: true,
             where: {
@@ -37,31 +39,31 @@ async function semesterInfoById(userId, id) {
         for (let c of data) {
             let subj = {};
             let sco = {};
-            subj.subjectId = c['Subject.Id'];
-            subj.userScoreId = c['Id'];
-            subj.code = c["Subject.Code"];
+            // subj.userScoreId = c['Id'];
+            subj.id = c["Subject.Code"];
             subj.name = c["Subject.Name"];
-            subj.credit = c["Subject.Credit"];
-            subj.type = "registered";
+            subj.credits = c["Subject.Credit"];
+            // subj.type = "registered";
             subj.semesterId = result.id;
 
             sco.midTerm = {score: c["Score.midExamScore"], weight: c["Score.midExamWeight"]};
             sco.finalTerm = {score: c["Score.finalExamScore"], weight: c["Score.finalExamWeight"]};
-            sco.final10 = c["Score.total10"];
-            sco.final4 = c["Score.total4"];
-            sco.status = c["Score.Status"];
+            sco.final = c["Score.total10"];
+            // sco.final4 = c["Score.total4"];
             subj.score = sco;
             result.subjects.push(subj);
-            if (sco.final10 !== null) { 
-                result.sumOfCredits += subj.credit;
-                result.totalMark10 += sco.final10 * subj.credit;
-                result.totalMark4 += sco.final4 * subj.credit;
+            if (subj.id.startsWith("PES") == false) { 
+                
+                result.sumOfCredits += subj.credits;
+                result.totalMark10 += sco.final * subj.credits;
+                // result.totalMark4 += sco.final4 * subj.credit;
             } else {
-                tmp += subj.credit;
+                tmp += subj.credits;
             }
         }
-        result.semesterGPAscale10 = result.totalMark10 / result.sumOfCredits;
-        result.semesterGPAscale4 = result.totalMark4 / result.sumOfCredits;
+        result.semesterGPA = result.totalMark10 / result.sumOfCredits;
+        // result.semesterGPAscale4 = result.totalMark4 / result.sumOfCredits;
+        result.cnt = result.sumOfCredits;
         result.sumOfCredits += tmp;
         return result;
 
@@ -77,6 +79,8 @@ export const getSemesterInfoById = async(req, res) => {
         let {params} = req;
         // let userScores = await 
         let result = await semesterInfoById(user.Id, params.semesterId);
+        delete result.cnt;
+        delete result.totalMark10;
         res.status(200).json(result);
         
     } catch (err) {
@@ -92,32 +96,80 @@ export const getAllSemesterInfo = async(req, res) => {
         });
 
         let result = {};
-        result.totalGPA10 = 0.0;
-        result.totalGPA4 = 0.0;
+        result.totalGPA = 0.0;
+        result.credits = 0;
+        // result.totalGPA4 = 0.0;
         result.semesterInfo = [];
-        result.credit = 0;
+        
+        result.cnt = 0;
         for (let c of semId) {
 
             let semInfo = await semesterInfoById(user.Id, c.Id);
             if (! semInfo) {
                 continue;
             } else {
-                result.credit += semInfo.sumOfCredits;
-                result.totalGPA10 += semInfo.totalMark10;
-                result.totalGPA4 += semInfo.totalMark4;
-                result.semesterInfo.push(semInfo);
+                result.credits += semInfo.sumOfCredits;
+                result.cnt += semInfo.cnt;
+                result.totalGPA += semInfo.totalMark10;
+                // result.totalGPA4 += semInfo.totalMark4;
+                delete semInfo.cnt;
+                delete semInfo.totalMark10;
+                if (semInfo.subjects.length > 0) {
+                    result.semesterInfo.push(semInfo);
+                }
             }
         }
-        if (result.credit > 0) {
-            result.totalGPA10 /= result.credit;
-            result.totalGPA4 /= result.credit;
+        if (result.cnt > 0) {
+            result.totalGPA /= result.cnt;
+            // result.totalGPA4 /= result.credit;
         }
+        delete result.cnt;
         res.status(200).json(result);
     } catch (err) {
         res.status(500).json(err.message);
     }
 
 }
+
+export const updateSemesterCourseList = async(req, res) => {
+    try {
+        const user = res.locals.decodedUser;
+        let semId = req.body.semesterId;
+        let subjects = req.body.subjects;
+        // console.log(subjects);
+        let subjectCodes = subjects.map(c => c.id);
+        // console.log(subjectCodes);
+        let subjectIds = await Subject.findAll({
+            raw:true,
+            where: {
+                Code: {
+                    [Op.in]: subjectCodes
+                }
+            },
+            attributes: ['Id']
+        });
+        let subIds = subjectIds.map(c => c.Id);
+        let userScoreIds = await UserScore.findAll({
+            raw: true,
+            where: {
+                UserId: user.Id,
+                SubjectId: {
+                    [Op.in]: subIds,
+                },
+                SemesterId: semId
+            }
+        });
+
+        for (let c of userScoreIds)
+
+        console.log(userScoreIds);
+        
+        res.status(200).json("ok");
+    } catch(err) {
+        res.status(500).json(err.message);
+    }
+}
+
 
 export const createCourseScoreInSemester = async(req, res) => {
     try {
@@ -128,7 +180,7 @@ export const createCourseScoreInSemester = async(req, res) => {
             midExamWeight: body.midExamWeight,
             finalExamScore: body.finalExamScore,
             finalExamWeight: body.finalExamWeight,
-            Status: body.status
+
         });
         await newScore.save();
         if (! newScore) {
@@ -199,7 +251,7 @@ export const updateCourseScoreInSemesterById = async (req, res) => {
                 finalExamScore: (! req.body.finalExamScore) ? curScore.finalExamScore: req.body.finalExamScore,
                 midExamWeight: (! req.body.midExamWeight) ? curScore.midExamWeight: req.body.midExamWeight,
                 finalExamWeight: (! req.body.finalExamWeight) ? curScore.finalExamWeight: req.body.finalExamWeight,
-                Status: (! req.body.status) ? curScore.Status: req.body.status
+                
             })
             await curScore.save();
 
@@ -217,6 +269,18 @@ export const updateCourseScoreInSemesterById = async (req, res) => {
     } catch (err) {
         res.status(500).json(err.message);
     }
+}
+
+export function calGPA(listOfSubjects) {
+    let total = 0.0;
+    let credits = 0;
+    for (let c of listOfSubjects) {
+        if (c.id.startsWith("PES")) continue;
+        credits += c.credits;
+        total += c.score.final * credits;
+    }
+    if (credits == 0) return 0;
+    return (total / credits);
 }
 
 export async function getUserGPAById(id) {

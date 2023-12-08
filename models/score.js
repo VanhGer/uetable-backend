@@ -24,9 +24,6 @@ const Score = sequelize.define("Score", {
     },
     total4: {
         type: DataTypes.FLOAT
-    },
-    Status: {
-        type: DataTypes.STRING
     }
 
  }, {
