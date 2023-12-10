@@ -1,5 +1,6 @@
 import { getUserGPAById } from "./score.js";
 import User from "../models/user.js"
+import Subject from "../models/subject.js";
 import UserScore from "../models/userScore.js";
 import Score from "../models/score.js";
 import { Op } from "sequelize";
@@ -8,10 +9,9 @@ import { Op } from "sequelize";
 
 async function calAverageGpa(listOfStudents) {
     let ans;
-    let gpa10 = 0, gpa4 = 0, num = 0;
+    let gpa10 = 0.0, gpa4 = 0.0, num = 0;
     for (let student of listOfStudents) {
         let cur = await getUserGPAById(student.Id);
-        
         if (cur.credits == 0) {
             continue;
         }  else {
@@ -94,24 +94,44 @@ export const getAverageGpaBySchoolYear = async(req, res) => {
 
 /** Credits */
 
-async function calAverageCredit(listOfStudents) {
-    let ans;
-    let credit = 0, num = 0;
-    for (let student of listOfStudents) {
-        let cur = await getUserGPAById(student.Id);
+async function calAverageCredit(listOfStudents, semId = null) {
+    try {
+        let credits = 0;
+        let num = listOfStudents.length;
         
-        if (cur.credits == 0) {
-            continue;
-        }  else {
-            num++;
-            credit += cur.credits
+        for (let student of listOfStudents) {
+            let whereCondition = {};
+            if (semId === null) {
+                whereCondition = {
+                    UserId: student.Id
+                }
+            } else {
+                whereCondition = {
+                    UserId: student.Id,
+                    SemesterId: semId,
+                }
+            }
+            let totalCre = await UserScore.findAll({
+                raw: true,
+                where: whereCondition,
+                include: [Subject],
+                attributes: ['Subject.Credit']
+            });
+            if (totalCre.length == 0) {
+                num--;
+            }
+            // console.log(totalCre);
+            for (let c of totalCre) {
+                credits += c.Credit;
+            }
         }
+        if (num == 0) return {students: 0, credits: 0};
+        return {students: num, credits: (credits / num)};
+    } catch (err) {
+        console.log(err);
+        return;
     }
-    if (num == 0) ans = {students: 0, credit: 0};
-    else {
-        ans = {students: num, credits: credit / num};
-    }
-    return ans;
+    
 }
 
 export const getAverageCreditBySchoolYear = async(req, res) => {
@@ -133,3 +153,56 @@ export const getAverageCreditBySchoolYear = async(req, res) => {
         res.status(500).json(err);
     }
 }
+
+export const getCreditRangeInSemester = async(req, res) => {
+    try {   
+        let semId = req.body.semesterId;
+        let schoolYear = req.body.year;
+        let students = await User.findAll({
+            raw: true,
+            where: {
+                StudentId: {
+                    [Op.like]: `${schoolYear}%`
+                },
+            }
+        });
+
+        // console.log(students.length);
+        let t10 = 0, t15 = 0, t20 = 0, t25 = 0, t30 = 0; 
+        for (let student of students) {
+            // console.log(student);
+            let totalCre = await UserScore.findAll({
+                raw: true,
+                where: {
+                    UserId: student.Id,
+                    SemesterId: semId,
+                },
+                include: [Subject],
+                attributes: ['Subject.Credit']
+            });
+            // console.log(totalCre.length);
+            let cur = 0;
+            for (let c of totalCre) {
+                cur += c.Credit;
+            }
+            // console.log(cur);
+            if (cur <= 10) t10++;
+            else if (cur <= 15) t15++;
+            else if (cur <= 20) t20++;
+            else if (cur <= 25) t25++;
+            else t30++; 
+        }
+        // console.log(t10, t15, t20, t25, t30);
+        let result = [];
+        result.push({type: "0-10", value: t10});
+        result.push({type: "10-15", value: t15});
+        result.push({type: "15-20", value: t20});
+        result.push({type: "20-25", value: t25});
+        result.push({type: "25-30", value: t30});
+        res.status(200).json(result);
+        // res.status(200).json("ok");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}
+

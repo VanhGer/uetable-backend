@@ -1,6 +1,5 @@
 import express from 'express'
-import { getSemesterInfoById, createCourseScoreInSemester, getUserGPA,
-    deleteCourseScoreInSemesterById, updateCourseScoreInSemesterById,
+import { getSemesterInfoById,  getUserGPA,
     getAllSemesterInfo, updateSemesterCourseList } from '../controllers/score.js';
 import { auth } from '../middlewares/auth.js'
 const router = express.Router();
