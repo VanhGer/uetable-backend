@@ -215,18 +215,19 @@ function calGPA(listOfSubjects) {
     return (total / credits);
 }
 
-async function calYearGPA(listOfSubjects, semId) {
+async function calTempAllGPA(listOfSubjects, userId, semId) {
     let totalScore = await UserScore.findAll({
         raw: true,
         where: {
-            UserId: id,
+            UserId: userId,
             SemesterId: {
                 [Op.ne]: semId
             }
         },
         include: [Score, Subject],
-        attributes: ['Subject.Credit', 'Score.total10']
+        attributes: ['Subject.Credit', 'Subject.Code', 'Score.total10']
     });
+    // console.log(totalScore);
     let total10 = 0.0;
     let cres = 0;
     for (let c of totalScore) {
@@ -240,32 +241,145 @@ async function calYearGPA(listOfSubjects, semId) {
         total10 += c.score.final * c.credits;
     }
     if (cres == 0) return 0;
+    // console.log(cres);
     return (total10 / cres);
 
 }
 
+async function calYearGPA(studentId, semId) {
+    try {
+        let allSem = [];
+        if (semId % 3 == 1) {
+            allSem.push(semId);  allSem.push(semId + 1); allSem.push(semId + 2);
+        } else if (semId % 3 == 0) {
+            allSem.push(semId - 2); allSem.push(semId - 1); allSem.push(semId);
+        } else {
+            allSem.push(semId - 1); allSem.push(semId); allSem.push(semId + 1);
+        }
+        
+        let totalScore = await UserScore.findAll({
+            raw: true,
+            where: {
+                UserId: studentId,
+                SemesterId: {
+                    [Op.in]: allSem 
+                }
+            },
+            include: [Score, Subject],
+            attributes: ['Subject.Credit', 'Subject.Code', 'Score.total10']
+        });
+        let total10 = 0.0;
+        let cres = 0;
+        for (let c of totalScore) {
+            if (c.Code.startsWith("PES")) continue;
+            total10 += c.total10 * c.Credit;
+            cres += c.Credit;
+        }
+        if (cres == 0) return 0;
+        return (total10 / cres);
+        
+
+    } catch(err) {
+        throw err;
+    }
+}
+
+async function calTempYearGPA(listOfSubjects, userId, semId) {
+    try {
+        let allSem = [];
+        if (semId % 3 == 1) {
+            allSem.push(semId + 1); allSem.push(semId + 2);
+        } else if (semId % 3 == 0) {
+            allSem.push(semId - 2); allSem.push(semId - 1); 
+        } else {
+            allSem.push(semId - 1); allSem.push(semId + 1);
+        }
+        
+        let totalScore = await UserScore.findAll({
+            raw: true,
+            where: {
+                UserId: userId,
+                SemesterId: {
+                    [Op.in]: allSem 
+                }
+            },
+            include: [Score, Subject],
+            attributes: ['Subject.Credit', 'Subject.Code', 'Score.total10']
+        });
+        // console.log(totalScore);
+        let total10 = 0.0;
+        let cres = 0;
+        for (let c of totalScore) {
+            if (c.Code.startsWith("PES")) continue;
+            total10 += c.total10 * c.Credit;
+            cres += c.Credit;
+        }
+
+        for (let c of listOfSubjects) {
+            if (c.id.startsWith("PES")) continue;
+            // console.log(c);
+            cres += c.credits;
+            total10 += c.score.final * c.credits;
+        }
+        // console.log(total10 / cres);
+        if (cres == 0) return 0;
+        return (total10 / cres);
+        
+
+    } catch(err) {
+        throw err;
+    }
+}
+
+export const getTempGPA = async (req, res) => {
+    try {
+        const user = res.locals.decodedUser;
+        let semId = req.body.id;
+        let subjects = req.body.subjects;
+        let credits = 0;
+        for (let c of subjects) {
+            credits += c.credits;
+        }
+        let semesterGPA = calGPA(subjects);
+        let totalGPA = await calTempAllGPA(subjects, user.Id, semId);
+        let yearGPA = await calTempYearGPA(subjects, user.Id, semId);
+        let result = {};
+        result.sumOfCredits = credits;
+        result.totalGPA = totalGPA;
+        result.yearGPA = yearGPA;
+        result.semesterGPA = semesterGPA;
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}
+
 export async function getUserGPAById(id) {
-    let totalScore = await UserScore.findAll({
-        raw: true,
-        where: {
-            UserId: id
-        },
-        include: [Score, Subject],
-        attributes: ['Subject.Code','Subject.Credit', 'Score.total10', 'Score.total4']
-    });
-    let total10 = 0.0, total4 = 0.0;
-    let cres = 0;
-    let tmp = 0;
-    for (let c of totalScore) {
-        if (c.Code.startsWith("PES")) {tmp++; continue;}
-        total10 += c.total10 * c.Credit;
-        total4 += c.total4 * c.Credit;
-        cres += c.Credit;
+    try {
+        let totalScore = await UserScore.findAll({
+            raw: true,
+            where: {
+                UserId: id
+            },
+            include: [Score, Subject],
+            attributes: ['Subject.Code','Subject.Credit', 'Score.total10', 'Score.total4']
+        });
+        let total10 = 0.0, total4 = 0.0;
+        let cres = 0;
+        let tmp = 0;
+        for (let c of totalScore) {
+            if (c.Code.startsWith("PES")) {tmp++; continue;}
+            total10 += c.total10 * c.Credit;
+            total4 += c.total4 * c.Credit;
+            cres += c.Credit;
+        }
+        if (cres == 0) {
+            return {credits: 0 + tmp, gpa10: 0, gpa4: 0};
+        }
+        else return {credits: cres + tmp, gpa10: (total10/cres), gpa4: (total4/cres)};
+    } catch (err) {
+        throw err;
     }
-    if (cres == 0) {
-        return {credits: 0 + tmp, gpa10: 0, gpa4: 0};
-    }
-    else return {credits: cres + tmp, gpa10: (total10/cres), gpa4: (total4/cres)};
 }
 
 export const getUserGPA = async (req, res) => {

@@ -8,23 +8,27 @@ import { Op } from "sequelize";
 /** GPA */
 
 async function calAverageGpa(listOfStudents) {
-    let ans;
-    let gpa10 = 0.0, gpa4 = 0.0, num = 0;
-    for (let student of listOfStudents) {
-        let cur = await getUserGPAById(student.Id);
-        if (cur.credits == 0) {
-            continue;
-        }  else {
-            num++;
-            gpa10 += cur.gpa10;
-            gpa4 += cur.gpa4;
+    try {
+        let ans;
+        let gpa10 = 0.0, gpa4 = 0.0, num = 0;
+        for (let student of listOfStudents) {
+            let cur = await getUserGPAById(student.Id);
+            if (cur.credits == 0) {
+                continue;
+            }  else {
+                num++;
+                gpa10 += cur.gpa10;
+                gpa4 += cur.gpa4;
+            }
         }
+        if (num == 0) ans = {students: 0, gpa10: 0, gpa4: 0};
+        else {
+            ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
+        }
+        return ans;
+    } catch (err) {
+        throw err;
     }
-    if (num == 0) ans = {students: 0, gpa10: 0, gpa4: 0};
-    else {
-        ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
-    }
-    return ans;
 }
 
 export const getAverageGpaOfAll = async (req, res) => {
@@ -128,8 +132,7 @@ async function calAverageCredit(listOfStudents, semId = null) {
         if (num == 0) return {students: 0, credits: 0};
         return {students: num, credits: (credits / num)};
     } catch (err) {
-        console.log(err);
-        return;
+        throw err;
     }
     
 }

@@ -6,7 +6,7 @@ import sequelize from "../database/db.js";
 import Subject from "../models/subject.js";
 import { Op } from "sequelize";
 import { getCoursebyStudentId } from "../middlewares/crawlCourse.js";
-import { START_CUR_TERM_DAY, END_CUR_TERM_DAY } from "../constant.js";
+import { START_CUR_TERM_DAY, END_CUR_TERM_DAY, CUR_TERM_ID } from "../constant.js";
 
 export const getScheduleInWeek = async (req, res) => {
     try {
@@ -120,7 +120,7 @@ export const autoCreateEventClass = async (req, res) => {
                 UserId: user.Id,
             }
         });
-        const classList = await getCoursebyStudentId(user.StudentId);
+        const classList = await getCoursebyStudentId(user.StudentId, CUR_TERM_ID);
         let classInfo = [];
         for (let i = 0; i < classList.length; i++) {
             let classCode = trimClass(classList[i].class);

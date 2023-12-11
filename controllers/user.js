@@ -4,6 +4,7 @@ import Authentication from '../middlewares/authentication.js'
 import UserDTO from '../dto/users.js'
 import UserHandleDTO from '../dto/userHandle.js'
 import { Op } from 'sequelize'
+import { crawlAllCourseWithInitMark } from "../middlewares/crawlCourse.js"
 import nodemailer from "nodemailer";
 import jwt, { decode } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
@@ -95,7 +96,8 @@ export const activateAccount = async (req, res) => {
         })
         const salt = bcrypt.genSaltSync(10)
         createUser.PasswordHash = bcrypt.hashSync(createUser.PasswordHash, salt)
-        createUser.save()
+        await createUser.save();
+        crawlAllCourseWithInitMark(createUser);
         res.status(201).send({
             message: 'User successfully created',
             StudentId: createUser.StudentId,

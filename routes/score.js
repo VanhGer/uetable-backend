@@ -1,5 +1,5 @@
 import express from 'express'
-import { getSemesterInfoById,  getUserGPA,
+import { getSemesterInfoById,  getUserGPA, getTempGPA,
     getAllSemesterInfo, updateSemesterCourseList } from '../controllers/score.js';
 import { auth } from '../middlewares/auth.js'
 const router = express.Router();
@@ -12,4 +12,5 @@ router.route('/api/score/getAllSemesterInfo').get(auth, getAllSemesterInfo);
 // router.route('/api/score/updateCourseScoreInSemesterById/:userScoreId').put(auth, updateCourseScoreInSemesterById)
 router.route('/api/score/getUserGPA').get(auth, getUserGPA);
 router.route('/api/score/updateSemesterCourseList').post(auth, updateSemesterCourseList);
+router.route('/api/score/getTempGPA').get(auth, getTempGPA);
 export default router;
