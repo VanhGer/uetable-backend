@@ -7,6 +7,10 @@ const Report = sequelize.define("Report", {
       autoIncrement: true,
       primaryKey: true
     },
+    PageType: {
+        type: DataTypes.CHAR,
+        defaultValue: 'R'
+    },
     CreatedAt: {
         type: DataTypes.DATE,
         defaultValue: sequelize.literal('NOW()')

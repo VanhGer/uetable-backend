@@ -57,4 +57,19 @@ const User = sequelize.define("User", {
     return bcrypt.compareSync(plainText, this.PasswordHash)
   }
 
+User.prototype.isMod = async (id) => {
+    const user = await User.find({
+      where: {
+        Id: id
+      }    
+    })
+    if (!user) {
+        return false
+    } 
+    if (user.Role != 1) {
+        return false
+    }
+    return true
+  }
+
  export default User;

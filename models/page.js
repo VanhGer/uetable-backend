@@ -1,39 +1,31 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
-const UserLike = sequelize.define("UserLike", {
-    Id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true
-    },
-
+const Page = sequelize.define("Page", {
     PageId: {
         type: DataTypes.INTEGER,
+        autoIncrement: true,
         allowNull: false,
+        primaryKey: true,
     },
-
     PageType: {
         type: DataTypes.CHAR,
+        primaryKey: true,
         allowNull: false,
         validate: {
             isIn: {
                 args: [['D', 'S', 'R', 'C']],
-                msg: "Must be D, S, C or R"
+                msg: "Must be D, S, R or C"
             }
         }
     },
-    UserId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    Score: {
-        type: DataTypes.INTEGER,
+    PageUrl: {
+        type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 0
+        defaultValue: 'XYZ',
     }
+
  }, {
     timestamps: false
  });
 
-export default UserLike;
+ export default Page;

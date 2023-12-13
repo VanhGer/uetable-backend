@@ -12,9 +12,20 @@ const PageComment = sequelize.define("PageComment", {
         allowNull: false
     },
 
+    PageType: {
+        type: DataTypes.CHAR,
+        allowNull: false,
+        validate: {
+            isIn: {
+                args: [['D', 'S', 'R']],
+                msg: "Must be D, S or R"
+            }
+        }
+    },
+
     PageId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
     }
 
  }, {
