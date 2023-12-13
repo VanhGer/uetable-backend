@@ -2,7 +2,7 @@
  * A data-transfer-object representing the information of a User Handle
  */
 export default class UserHandleDTO {
-    static convertToDto(user) {
+    static async convertToDto(user) {
         return {
             userId: user.Id,
             studentId: user.StudentId,
