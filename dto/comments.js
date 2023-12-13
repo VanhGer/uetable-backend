@@ -17,7 +17,11 @@ export default class CommentDTO {
       where: { ParentId: comment.Id },
     })
     const usersLiked = await UserLike.findAll({
-      where: { PageId: comment.Id , PageType: 'C'},
+      where: { PageId: comment.Id , PageType: 'C', score: 1},
+      raw: true,
+    })
+    const usersDisLiked = await UserLike.findAll({
+      where: { PageId: comment.Id , PageType: 'C', score: -1},
       raw: true,
     })
 
@@ -36,8 +40,10 @@ export default class CommentDTO {
       preVersion: comment.PreCommentId,
       children: children.map((child) => child.Id),
       usersLiked: usersLiked.length,
+      usersDisLiked: usersDisLiked.length,
       timestamp: Date.parse(comment.CreatedAt),
       hasLiked: usersLiked.some((like) => like.UserId === userId),
+      hasDisLiked: usersDisLiked.some((like) => like.UserId === userId),
     }
   }
 }
