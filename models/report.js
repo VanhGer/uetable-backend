@@ -21,13 +21,14 @@ const Report = sequelize.define("Report", {
     },
     Type: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0,
     },
     UserId: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    Satus: {
+    Status: {
         type: DataTypes.INTEGER,
         defaultValue: 1,
         allowNull: false

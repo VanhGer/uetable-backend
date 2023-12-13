@@ -9,6 +9,7 @@ import EventRouter from './routes/event.js'
 import SubjectRouter from './routes/subject.js'
 import DocumentRouter from './routes/document.js'
 import ScoreRouter from './routes/score.js';
+import ReportRouter from './routes/report.js';
 import StatisticRouter from './routes/statistic.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -39,5 +40,6 @@ app.use('/', SubjectRouter);
 app.use('/', DocumentRouter);
 app.use('/', ScoreRouter);
 app.use('/', StatisticRouter);
+app.use('/', ReportRouter);
 
 app.listen(PORT, () => console.log(`Your server is running successfully on port ${PORT}`))

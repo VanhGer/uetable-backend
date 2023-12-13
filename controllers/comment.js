@@ -69,9 +69,16 @@ export const modifyComment = async (req, res) => {
             return
         }
 
-        if (comment.UserId !== loggedInUser.Id && loggedInUser.Role !== 1) {
-            res.status(401).send({ error: 'You can not delete this comment!'})
-            return
+        if (comment.UserId !== loggedInUser.Id) {
+            const user = await User.findOne({
+                where: {
+                    Id: loggedInUser.Id
+                }
+            })
+            if (user.Role != 1) {
+                res.status(401).send({ error: 'You can not modify this comment!'})
+                return
+            }
         }
 
         const newComment = await VersionComment.create({
