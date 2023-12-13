@@ -5,7 +5,7 @@ import Semester from "../models/semester.js";
 import { Op } from "sequelize";
 import sequelize from "../database/db.js";
 
-async function semesterInfoById(userId, id) {
+export async function semesterInfoById(userId, id) {
     try {
         let result = {};
         let sem = await Semester.findOne({
@@ -23,10 +23,10 @@ async function semesterInfoById(userId, id) {
         result.subjects = [];
         result.sumOfCredits = 0;
         result.semesterGPA = 0.0;
-        // result.semesterGPAscale4 = 0.0;
+        result.semesterGPA4 = 0.0;
         result.totalMark10 = 0.0;
         result.cnt = 0.0;
-        // result.totalMark4 = 0.0
+        result.totalMark4 = 0.0
         let data = await UserScore.findAll({
             raw: true,
             where: {
@@ -49,20 +49,20 @@ async function semesterInfoById(userId, id) {
             sco.midTerm = {score: c["Score.midExamScore"], weight: c["Score.midExamWeight"]};
             sco.finalTerm = {score: c["Score.finalExamScore"], weight: c["Score.finalExamWeight"]};
             sco.final = c["Score.total10"];
-            // sco.final4 = c["Score.total4"];
+            sco.final4 = c["Score.total4"];
             subj.score = sco;
             result.subjects.push(subj);
             if (subj.id.startsWith("PES") == false) { 
                 
                 result.sumOfCredits += subj.credits;
                 result.totalMark10 += sco.final * subj.credits;
-                // result.totalMark4 += sco.final4 * subj.credit;
+                result.totalMark4 += sco.final4 * subj.credits;
             } else {
                 tmp += subj.credits;
             }
         }
         result.semesterGPA = result.totalMark10 / result.sumOfCredits;
-        // result.semesterGPAscale4 = result.totalMark4 / result.sumOfCredits;
+        result.semesterGPA4 = result.totalMark4 / result.sumOfCredits;
         result.cnt = result.sumOfCredits;
         result.sumOfCredits += tmp;
         return result;
@@ -131,6 +131,7 @@ export const getAllSemesterInfo = async(req, res) => {
 
 }
 
+/** Update course scores in semester */
 export const updateSemesterCourseList = async(req, res) => {
     try {
         const user = res.locals.decodedUser;
@@ -246,6 +247,7 @@ async function calTempAllGPA(listOfSubjects, userId, semId) {
 
 }
 
+/** Get GPA in a year */
 async function calYearGPA(studentId, semId) {
     try {
         let allSem = [];
@@ -284,6 +286,7 @@ async function calYearGPA(studentId, semId) {
     }
 }
 
+/** Get temparary GPA in a year */
 async function calTempYearGPA(listOfSubjects, userId, semId) {
     try {
         let allSem = [];
@@ -331,7 +334,8 @@ async function calTempYearGPA(listOfSubjects, userId, semId) {
     }
 }
 
-export const getTempGPA = async (req, res) => {
+/** Get temporary GPA */
+export const getTempGPA = async (req, res) => { 
     try {
         const user = res.locals.decodedUser;
         let semId = req.body.id;
@@ -382,6 +386,7 @@ export async function getUserGPAById(id) {
     }
 }
 
+/** Get averange GPA of this student */
 export const getUserGPA = async (req, res) => {
     try {
         const user = res.locals.decodedUser;

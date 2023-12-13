@@ -2,8 +2,33 @@ import { getUserGPAById } from "./score.js";
 import User from "../models/user.js"
 import Subject from "../models/subject.js";
 import UserScore from "../models/userScore.js";
+import Semester from "../models/semester.js";
 import Score from "../models/score.js";
+import { semesterInfoById } from "./score.js";
 import { Op } from "sequelize";
+
+
+const keyMark = ['F', 'D', 'D+', 'C', 'C+', 'B', 'B+', 'A', 'A+'];
+const keyRangeMark = ["3.6 ~ 4.0", "3.2 ~ 3.59", "2.5 ~ 3.19", "2.0 ~ 2.49", "< 2.0"]
+function getTypeMark(mark) {
+    if (mark < 4.0) return 0;
+    if (mark < 5.0) return 1;
+    if (mark < 5.5) return 2;
+    if (mark < 6.5) return 3;
+    if (mark < 7.0) return 4;
+    if (mark < 8.0) return 5;
+    if (mark < 8.5) return 6;
+    if (mark < 9.0) return 7;
+    return 8;
+}
+
+function getRangeMark(gpa4) {
+    if (gpa4 < 2.0) return 4;
+    if (gpa4 < 2.5) return 3;
+    if (gpa4 < 3.2) return 2;
+    if (gpa4 < 3.6) return 1;
+    return 0;
+}
 
 /** GPA */
 
@@ -11,6 +36,7 @@ async function calAverageGpa(listOfStudents) {
     try {
         let ans;
         let gpa10 = 0.0, gpa4 = 0.0, num = 0;
+        let range = [0, 0, 0, 0, 0];
         for (let student of listOfStudents) {
             let cur = await getUserGPAById(student.Id);
             if (cur.credits == 0) {
@@ -19,11 +45,16 @@ async function calAverageGpa(listOfStudents) {
                 num++;
                 gpa10 += cur.gpa10;
                 gpa4 += cur.gpa4;
+                let tmp = getRangeMark(gpa4);
+                range[tmp]++;
             }
         }
         if (num == 0) ans = {students: 0, gpa10: 0, gpa4: 0};
         else {
             ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
+        }
+        for (let i = 0; i < 5; i++) {
+            ans[keyRangeMark[i]] = range[i];
         }
         return ans;
     } catch (err) {
@@ -45,13 +76,26 @@ export const getAverageGpaOfAll = async (req, res) => {
 
 }
 
-export const getAverageGpaBySubjectId = async(req, res) => {
+
+export const getAverageGpaBySubject = async(req, res) => {
     try {
-        let {params} = req;   
+        let subjectName = req.body.subjectName;  
+        let subject = await Subject.findOne({
+            raw: true,
+            where: {
+                Name: {
+                    [Op.like]: `%${subjectName}%`
+                }
+            }
+        });
+        if (subject === null) {
+            res.status(404).json("Not found the subject");
+            return;
+        }
         let scores = await UserScore.findAll({
             raw: true,
             where: {
-                SubjectId: params.subjectId
+                SubjectId: subject.Id
             },
             include: [Score],
             attributes: ['Score.total10', 'Score.total4']
@@ -59,16 +103,24 @@ export const getAverageGpaBySubjectId = async(req, res) => {
        
         let ans;
         let gpa10 = 0, gpa4 = 0, num = 0;
+        let numtotal = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         for (let score of scores) {
             num++;
             gpa10 += score.total10;
             gpa4 += score.total4;
-            
+            let cur = getTypeMark(gpa10);
+            numtotal[cur]++;
         }
+        
         if (num == 0) ans = {students: 0, gpa10: 0, gpa4: 0};
         else {
             ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
         }
+        ans['name'] = subject.Name;
+        for (let i = 0; i < 9; i++) {
+            ans[keyMark[i]] = numtotal[i];
+        }
+        
         res.status(200).json(ans);
     
     } catch (err) {
@@ -78,12 +130,12 @@ export const getAverageGpaBySubjectId = async(req, res) => {
 
 export const getAverageGpaBySchoolYear = async(req, res) => {
     try {   
-        let {params} = req;
+        let schoolYear = req.body.schoolYear;
         let students = await User.findAll({
             raw: true,
             where: {
                 StudentId: {
-                    [Op.like]: `${params.startId}%`
+                    [Op.like]: `${schoolYear}%`
                 }
             }
         });
@@ -207,6 +259,39 @@ export const getCreditRangeInSemester = async(req, res) => {
     } catch (err) {
         res.status(500).json(err);
     }
+}
+
+export const getCreditAndGPAInAllSemesters = async(req, res) => {
+    try {
+        const user = res.locals.decodedUser;
+        let sems = await Semester.findAll({
+            raw: true,
+        });
+        let ans = [];
+       
+
+        for (let c of sems) {
+            let result = {};
+            result.title = c.Name;
+            let semInfo = await semesterInfoById(user.Id, c.Id);
+            if (! semInfo) {
+                continue;
+            } else {
+                result.credits = semInfo.sumOfCredits;
+
+                result.totalGPA10 = semInfo.semesterGPA;
+                result.totalGPA4 = semInfo.semesterGPA4;
+                
+                if (semInfo.subjects.length > 0) {
+                    ans.push(result);
+                }
+            }
+        }
+        res.status(200).json(ans);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+
 }
 
 
