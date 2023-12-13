@@ -3,7 +3,8 @@ import {
     createComment,
     getCommentId,
     modifyComment,
-    deleteComment 
+    deleteComment,
+    getCommentByPage,
 } from '../controllers/comment.js'
 import { auth } from '../middlewares/auth.js'
 const router = express.Router();
@@ -14,5 +15,7 @@ router
   .post(auth, createComment)
   .put(auth, modifyComment)
   .delete(auth, deleteComment)
+
+router.route('/api/comment/page/').get(auth, getCommentByPage)
 
 export default router;

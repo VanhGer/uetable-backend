@@ -21,7 +21,8 @@ export const createComment = async (req, res) => {
         const pageComment = await PageComment.create({
             CommentId: comment.Id,
             PageType: pageType,
-            PageId: pageId
+            PageId: pageId,
+            ParentId: parentId,
         });
 
         await pageComment.save();
@@ -34,6 +35,37 @@ export const createComment = async (req, res) => {
         res.status(500).json(err.message);
     }
 };
+
+export const getCommentByPage = async (req, res) => {
+    try {
+        const { pageId , pageType, offset, limit} = req.body;
+        const decodedUser = res.locals.decodedUser
+        const comments = await PageComment.findAll({
+            where: {
+                PageId: pageId,
+                pageType: pageType,
+                parentId: 0,
+            },
+            offset: offset,
+            limit: limit,
+        });
+
+        console.log(comments)
+
+        const commentDTOs = await Promise.all(comments.map( async (comment) => {
+            // console.log(comment)
+            const commentModel = await Comment.findByPk(comment.CommentId)
+            const commentDTO = await CommentDTO.convertToDto(commentModel, decodedUser.Id);
+            return commentDTO;
+        }));
+
+        // console.log(commentDTOs)
+        res.status(200).send(commentDTOs);
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
 
 export const getCommentId = async (req, res) => {
     try {
