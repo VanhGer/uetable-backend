@@ -29,6 +29,5 @@ const AccessSubject = sequelize.define("AccessSubject", {
 }, {
     timestamps: false,
 });
-Class.belongsTo(Subject);
-Subject.hasMany(Class);
-export default Class;
+
+export default AccessSubject;
