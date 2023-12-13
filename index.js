@@ -2,6 +2,7 @@ import express from 'express'
 import 'dotenv/config'
 import MajorRouter from './routes/major.js'
 import CommentRouter from './routes/comment.js'
+import PageRouter from './routes/page.js'
 import UserRouter from './routes/user.js'
 import ScheduleRouter from './routes/schedule.js'
 import EventRouter from './routes/event.js'
@@ -28,6 +29,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
+app.use('/', PageRouter);
 app.use('/', MajorRouter);
 app.use('/', CommentRouter);
 app.use('/', UserRouter);

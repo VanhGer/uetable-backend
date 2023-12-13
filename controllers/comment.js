@@ -1,6 +1,7 @@
 import Comment from "../models/comment.js";
 import PageComment from "../models/pageComment.js";
 import CommentDTO from "../dto/comments.js";
+import CommentVersionDTO from "../dto/commentVersion.js";
 import User from "../models/user.js";
 import VersionComment from "../models/versionComment.js";
 
@@ -35,37 +36,6 @@ export const createComment = async (req, res) => {
         res.status(500).json(err.message);
     }
 };
-
-export const getCommentByPage = async (req, res) => {
-    try {
-        const { pageId , pageType, offset, limit} = req.body;
-        const decodedUser = res.locals.decodedUser
-        const comments = await PageComment.findAll({
-            where: {
-                PageId: pageId,
-                pageType: pageType,
-                parentId: 0,
-            },
-            offset: offset,
-            limit: limit,
-        });
-
-        console.log(comments)
-
-        const commentDTOs = await Promise.all(comments.map( async (comment) => {
-            // console.log(comment)
-            const commentModel = await Comment.findByPk(comment.CommentId)
-            const commentDTO = await CommentDTO.convertToDto(commentModel, decodedUser.Id);
-            return commentDTO;
-        }));
-
-        // console.log(commentDTOs)
-        res.status(200).send(commentDTOs);
-    } catch (error) {
-        res.status(500).send(error)
-    }
-}
-
 
 export const getCommentId = async (req, res) => {
     try {
@@ -159,6 +129,29 @@ export const deleteComment = async (req, res) => {
         } else {
             res.status(500).send({ error: 'Failed to destroy the commnet.' })
         }
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+export const getVersionByComment = async (req, res) => {
+    try {
+        const { commentId } = req.body;
+        const decodedUser = res.locals.decodedUser
+        const comments = await VersionComment.findAll({
+            where: {
+                CommentId: commentId,
+            },
+            order: [['CreatedAt', 'DESC']],
+        });
+
+        const commentDTOs = await Promise.all(comments.map( async (comment) => {
+            const commentVersionDTO = await CommentVersionDTO.convertToDto(comment, decodedUser.Id);
+            return commentVersionDTO;
+        }));
+
+        // console.log(commentDTOs)
+        res.status(200).send(commentDTOs);
     } catch (error) {
         res.status(500).send(error)
     }
