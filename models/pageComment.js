@@ -26,7 +26,12 @@ const PageComment = sequelize.define("PageComment", {
     PageId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-    }
+    },
+    ParentId: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+    },
 
  }, {
     timestamps: false
