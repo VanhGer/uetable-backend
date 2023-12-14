@@ -125,7 +125,7 @@ export const getAverageGpaBySubject = async(req, res) => {
         else {
             ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
         }
-        ans['name'] = subject.Name;
+        ans['Name'] = subject.Name;
         for (let i = 0; i < 9; i++) {
             ans[keyMark[i]] = numtotal[i];
         }
