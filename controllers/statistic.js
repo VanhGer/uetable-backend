@@ -37,25 +37,34 @@ async function calAverageGpa(listOfStudents) {
         let ans;
         let gpa10 = 0.0, gpa4 = 0.0, num = 0;
         let range = [0, 0, 0, 0, 0];
+        let result = [];
         for (let student of listOfStudents) {
-            let cur = await getUserGPAById(student.Id);
-            if (cur.credits == 0) {
-                continue;
-            }  else {
-                num++;
-                gpa10 += cur.gpa10;
-                gpa4 += cur.gpa4;
-                let tmp = getRangeMark(gpa4);
-                range[tmp]++;
+            try {
+                let cur = await getUserGPAById(student.Id);
+                if (cur.credits == 0) {
+                    continue;
+                }  else {
+                    num++;
+                    gpa10 += cur.gpa10;
+                    gpa4 += cur.gpa4;
+                    let tmp = getRangeMark(gpa4);
+                    range[tmp]++;
+                }
+            } catch (err) {
+                throw err;
             }
+            
         }
+        // console.log("a");
         if (num == 0) ans = {students: 0, gpa10: 0, gpa4: 0};
         else {
             ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
         }
         for (let i = 0; i < 5; i++) {
-            ans[keyRangeMark[i]] = range[i];
+            let tmp = {'type': keyRangeMark[i], 'value': range[i]};
+            result.push(tmp);
         }
+        ans['result'] = result;
         return ans;
     } catch (err) {
         throw err;
@@ -139,7 +148,7 @@ export const getAverageGpaBySchoolYear = async(req, res) => {
                 }
             }
         });
-        // console.log("33", students);
+        // console.log("33", students.length);
         let ans = await calAverageGpa(students);
         res.status(200).json(ans);
         // res.status(200).json("ok");

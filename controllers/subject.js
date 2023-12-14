@@ -2,10 +2,13 @@ import Subject from "../models/subject.js";
 import { Op } from "sequelize";
 import Class from "../models/class.js";
 import UserScore from "../models/userScore.js";
+import SubjectLike from "../models/subjectLike.js";
+import AccessSubject from "../models/accessSubject.js"
 
 export const getSubjectByName = async (req, res) => {
     try {
-        let str = req.query.input;
+        let str = req.body.name;
+        // console.log(req);
         const subjectList = await Subject.findAll({
             where: {
                 Name: {
@@ -21,7 +24,8 @@ export const getSubjectByName = async (req, res) => {
 
 export const getSubjectByCode = async (req, res) => {
     try {
-        let str = req.query.input;
+        let str = req.body.code;
+        console.log(req);
         const subjectList = await Subject.findAll({
             where: {
                 Code: {
@@ -37,7 +41,7 @@ export const getSubjectByCode = async (req, res) => {
 
 export const getSubjectInfo = async (req, res) => {
     try {
-        let id = req.query.id;
+        let id = req.body.id;
         const subjectList = await Subject.findAll({
             where: {
                 Id: id
@@ -82,3 +86,41 @@ export const getSubjectHaveNotLearn = async (req, res) => {
         res.status(500).json(err.message)
     }
 }
+
+export const starASubject = async(req, res) => {
+    try {
+        let subjectId = req.body.subjectId;
+        let star = req.body.star;
+        const user = res.locals.decodedUser;
+        if (star == false) {
+            let subjectLike = await SubjectLike.findOne({
+                where: {
+                    UserId: user.Id,
+                    subjectId: subjectId
+                }
+            });
+            if (subjectLike !== null) {
+                await subjectLike.destroy();
+            }
+        } else {
+            let subjectLike = await SubjectLike.findOne({
+                raw: true,
+                where: {
+                    UserId: user.Id,
+                    subjectId: subjectId
+                }
+            });
+            if (subjectLike === null) {
+                let cur = await SubjectLike.create({
+                    SubjectId: subjectId,
+                    UserId: user.Id,
+                });
+                await cur.save();
+            }
+        }
+        res.status(200).json("Successfully");
+    } catch (err) {
+        res.status(500).json(err.message);
+    } 
+}
+
