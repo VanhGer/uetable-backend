@@ -3,7 +3,9 @@ import { Op } from "sequelize";
 import Class from "../models/class.js";
 import UserScore from "../models/userScore.js";
 import SubjectLike from "../models/subjectLike.js";
+import Document from "../models/document.js";
 import AccessSubject from "../models/accessSubject.js"
+import Score from "../models/score.js";
 
 export const getSubjectByName = async (req, res) => {
     try {
@@ -41,17 +43,94 @@ export const getSubjectByCode = async (req, res) => {
 
 export const getSubjectInfo = async (req, res) => {
     try {
-        let id = req.body.id;
-        const subjectList = await Subject.findAll({
+        let id = req.body.subjectId;
+        const user = res.locals.decodedUser;
+        const subjectList = await Subject.findOne({
+            where: {
+                Id: id
+            },
+            include: [Class, Document]
+        });
+        let checkStar = await SubjectLike.findOne({
+            where: {
+                SubjectId: id,
+                UserId: user.Id
+            }
+        });
+
+        let userScore = await UserScore.findOne({
+            raw: true,
+            where: {
+                SubjectId: id,
+                UserId: user.Id
+            }
+        });
+        let score = 0, type = "registered"
+        if (userScore == null) {score = "haven't studied"; type = "haven't registered"}
+        else {
+            let sc = await Score.findOne({
+                where: {
+                    Id: userScore.ScoreId
+                }
+            });
+            score = {'final': sc.total10};
+        }
+        let stared = true;
+        if (checkStar === null) stared = false;
+        let result = {};
+        result.id = subjectList.Code;
+        result.name = subjectList.Name;
+        result.credits = subjectList.Credit;
+        result.score = score;
+        result.type = type;
+        result.like = subjectList.Likes;
+        result.documents = subjectList.Documents.length;
+        result.stared = stared;
+        result.lecturers = [];
+        for (let c of subjectList.Classes) {
+            let teacher = c.Teacher;
+            if (result.lecturers.includes({'name': teacher})) continue;
+            result.lecturers.push(teacher);
+        }
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json(err.message)
+    }
+}
+
+export const getRegisteredSubjectInfo = async (req, res) => {
+    try {
+        let id = req.body.subjectId;
+        const user = res.locals.decodedUser;
+        const subject = await Subject.findOne({
             where: {
                 Id: id
             },
             include: {
-                model: Class,
+                model: Class
+            }
+        });
+
+        let userScore = await UserScore.findOne({
+            raw: true,
+            where: {
+                SubjectId: id,
+                UserId: user.Id
             },
-            
-        }) 
-        res.status(200).json(subjectList);
+            include: Score
+        });
+        let result = {};
+        result.id = subject.Code;
+        result.name = subject.Name;
+        result.credits = subject.Credit;
+        result.score = {};
+        result.score.midTerm = {'score': userScore['Score.midExamScore'], 'weight': userScore['Score.midExamWeight']};
+        result.score.finalTerm = {'score': userScore['Score.finalExamScore'], 'weight': userScore['Score.finalExamWeight']};
+        result.score.final = userScore['Score.total10'];
+        result.semesterId = userScore.SemesterId;
+        result.type = "registered";
+        result.lecturer = subject.Classes[0].Teacher;
+        res.status(200).json(result);
     } catch (err) {
         res.status(500).json(err.message)
     }
