@@ -9,7 +9,7 @@ import Score from "../models/score.js";
 
 export const getSubjectByName = async (req, res) => {
     try {
-        let str = req.body.name;
+        let str = req.query.name;
         // console.log(req);
         const subjectList = await Subject.findAll({
             where: {
@@ -26,7 +26,7 @@ export const getSubjectByName = async (req, res) => {
 
 export const getSubjectByCode = async (req, res) => {
     try {
-        let str = req.body.code;
+        let str = req.query.code;
         console.log(req);
         const subjectList = await Subject.findAll({
             where: {

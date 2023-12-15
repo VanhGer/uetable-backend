@@ -88,28 +88,17 @@ export const getAverageGpaOfAll = async (req, res) => {
 
 export const getAverageGpaBySubject = async(req, res) => {
     try {
-        let subjectName = req.body.subjectName;  
-        let subject = await Subject.findOne({
-            raw: true,
-            where: {
-                Name: {
-                    [Op.like]: `%${subjectName}%`
-                }
-            }
-        });
-        if (subject === null) {
-            res.status(404).json("Not found the subject");
-            return;
-        }
+        let subjectId = req.query.subjectId;  
+        console.log(subjectId);
         let scores = await UserScore.findAll({
             raw: true,
             where: {
-                SubjectId: subject.Id
+                SubjectId: subjectId
             },
             include: [Score],
             attributes: ['Score.total10', 'Score.total4']
         });
-       
+        console.log(scores);
         let ans;
         let gpa10 = 0, gpa4 = 0, num = 0;
         let numtotal = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -125,7 +114,6 @@ export const getAverageGpaBySubject = async(req, res) => {
         else {
             ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
         }
-        ans['Name'] = subject.Name;
         for (let i = 0; i < 9; i++) {
             ans[keyMark[i]] = numtotal[i];
         }
@@ -139,7 +127,7 @@ export const getAverageGpaBySubject = async(req, res) => {
 
 export const getAverageGpaBySchoolYear = async(req, res) => {
     try {   
-        let schoolYear = req.body.schoolYear;
+        let schoolYear = req.query.schoolYear;
         let students = await User.findAll({
             raw: true,
             where: {
@@ -220,8 +208,10 @@ export const getAverageCreditBySchoolYear = async(req, res) => {
 
 export const getCreditRangeInSemester = async(req, res) => {
     try {   
-        let semId = req.body.semesterId;
-        let schoolYear = req.body.year;
+        // let {params} = req;
+        let semId = req.query.semesterId;
+        let schoolYear = req.query.year;
+        // console.log(semId, schoolYear);
         let students = await User.findAll({
             raw: true,
             where: {
