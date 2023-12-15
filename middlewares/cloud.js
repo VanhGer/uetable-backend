@@ -12,7 +12,7 @@ cloudinary.config({
 
 const docStorage = new CloudinaryStorage({
   cloudinary,
-  allowedFormats: ['jpg', 'png', 'pdf', 'zip', 'rar', 'docx', 'ppt', 'pptx'],
+  allowedFormats: ['raw', 'jpg', 'png', 'pdf', 'zip', 'rar', 'docx', 'ppt', 'pptx'],
   params: {
     folder: 'uetable/Document'
   }

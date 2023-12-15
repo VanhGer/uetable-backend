@@ -84,10 +84,8 @@ export const likeByPage = async (req, res) => {
     }
 }
 
-export const getLikeByPage = async (req, res) => {
+export async function getPageLikes(pageId, pageType) {
     try {
-        const { pageId , pageType } = req.body;
-        const decodedUser = res.locals.decodedUser
         const likes = await UserLike.count({
             where: {
                 PageId: pageId,
@@ -95,7 +93,14 @@ export const getLikeByPage = async (req, res) => {
                 Score: 1,
             },
         });
+        return likes;
+    } catch (err) {
+        throw err;
+    }
+}
 
+export async function getPageDislikes(pageId, pageType) {
+    try {
         const dislikes = await UserLike.count({
             where: {
                 PageId: pageId,
@@ -103,14 +108,36 @@ export const getLikeByPage = async (req, res) => {
                 Score: -1,
             },
         });
+        return dislikes;
+    } catch (err) {
+        throw err;
+    }
+}
 
+export async function getUserlikes(pageId, pageType, userId) {
+    try {
         const userLike = await UserLike.findOne({
             where: {
                 PageId: pageId,
                 PageType: pageType,
-                UserId: decodedUser.Id,
+                UserId: userId
             },
         });
+        return userLike;
+    } catch (err) {
+        throw err;
+    }
+}
+
+
+export const getLikeByPage = async (req, res) => {
+    try {
+        const { pageId , pageType } = req.body;
+        const decodedUser = res.locals.decodedUser
+        const likes = await getPageLikes(pageId, pageType);
+
+        const dislikes = await getPageDislikes(pageId, pageType);
+        const userLike = await getUserlikes(pageId, pageType, decodedUser.Id);
 
         if (!userLike) {
             res.status(201).send({

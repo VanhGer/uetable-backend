@@ -28,10 +28,6 @@ const Subject = sequelize.define("Subject", {
     MajorId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-    },
-    Likes: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0
     }
 
 }, {

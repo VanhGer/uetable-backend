@@ -5,6 +5,7 @@ import Class from "../models/class.js";
 import UserScore from "../models/userScore.js";
 import SubjectLike from "../models/subjectLike.js";
 import Document from "../models/document.js";
+import { getPageLikes, getPageDislikes, getUserlikes } from "./page.js";
 import AccessSubject from "../models/accessSubject.js"
 import Score from "../models/score.js";
 
@@ -50,15 +51,10 @@ export const getSubjectInfo = async (req, res) => {
             where: {
                 Id: id
             },
-            include: [Class, Document]
+            include: [Class]
         });
-        let checkStar = await SubjectLike.findOne({
-            where: {
-                SubjectId: id,
-                UserId: user.Id
-            }
-        });
-
+        let userLike = await getUserlikes(id, "S", user.Id);
+        let subjectLike = await getPageLikes(id, 'S');
         let userScore = await UserScore.findOne({
             raw: true,
             where: {
@@ -77,21 +73,23 @@ export const getSubjectInfo = async (req, res) => {
             score = {'final': sc.total10};
         }
         let stared = true;
-        if (checkStar === null) stared = false;
+        if (userLike === null) stared = false;
         let result = {};
         result.id = subjectList.Code;
         result.name = subjectList.Name;
         result.credits = subjectList.Credit;
         result.score = score;
         result.type = type;
-        result.like = subjectList.Likes;
-        result.documents = subjectList.Documents.length;
+        result.like = subjectLike;
+        result.documents = await getNumberDocument(id);
         result.stared = stared;
         result.lecturers = [];
+        let curLect = [];
         for (let c of subjectList.Classes) {
             let teacher = c.Teacher;
-            if (result.lecturers.includes({'name': teacher})) continue;
-            result.lecturers.push(teacher);
+            if (curLect.includes(teacher)) continue;
+            result.lecturers.push({'name': teacher});
+            curLect.push(teacher);
         }
         await saveSubjectAccessTime(id, user.Id);
         res.status(200).json(result);
@@ -168,43 +166,6 @@ export const getSubjectHaveNotLearn = async (req, res) => {
     }
 }
 
-export const starASubject = async(req, res) => {
-    try {
-        let subjectId = req.body.subjectId;
-        let star = req.body.star;
-        const user = res.locals.decodedUser;
-        if (star == false) {
-            let subjectLike = await SubjectLike.findOne({
-                where: {
-                    UserId: user.Id,
-                    subjectId: subjectId
-                }
-            });
-            if (subjectLike !== null) {
-                await subjectLike.destroy();
-            }
-        } else {
-            let subjectLike = await SubjectLike.findOne({
-                raw: true,
-                where: {
-                    UserId: user.Id,
-                    subjectId: subjectId
-                }
-            });
-            if (subjectLike === null) {
-                let cur = await SubjectLike.create({
-                    SubjectId: subjectId,
-                    UserId: user.Id,
-                });
-                await cur.save();
-            }
-        }
-        res.status(200).json("Successfully");
-    } catch (err) {
-        res.status(500).json(err.message);
-    } 
-}
-
 async function saveSubjectAccessTime(subjectId, userId) {
     try {
         let theLast = await AccessSubject.findOne({
@@ -227,4 +188,75 @@ async function saveSubjectAccessTime(subjectId, userId) {
         throw err;
     }
     
+}
+
+async function getLastAccessTime(subjectId, userId) {
+    try {
+        let theLast = await AccessSubject.findOne({
+            where: {
+                SubjectId: subjectId,
+                UserId: userId, 
+            }
+        });
+        if (theLast === null) {
+            return null;
+        } else {
+           return theLast.LastAccess;
+        }
+    } catch(err) {
+        throw err;
+    }
+}
+
+async function getNumberDocument(subjectId) {
+    try {
+        let num = await Document.count({
+            where: {
+                SubjectId: subjectId
+            }
+        });
+        return num;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const getPartSubject = async (req, res) => {
+    try {
+        let str = req.body.searchValue;
+        const user = res.locals.decodedUser;
+        let subjectList = await Subject.findAll({
+            raw: true,
+            where: {
+                Name: {
+                    [Op.like]: `%${str}%`
+                }
+            }
+        });
+        for (let c of subjectList) {
+            let curStar = await getUserlikes(c.Id, 'S', user.Id);
+            if (curStar === null) {
+                c.star = 0;
+            } else {
+                c.star = 1;
+            }
+
+            c.likes = await getPageLikes(c.Id, 'S');
+            c.lastAccess = await getLastAccessTime(c.Id, user.Id);
+        }
+
+        console.log(subjectList);
+        if (req.body.sortBy == "stared") {
+            
+            const newSubj = subjectList.sort((a, b) => b.star - a.star);
+            
+        } else if (req.body.sortBy == "rating"){
+            
+        }
+        res.status(200).json("ok");
+        
+
+    } catch (err) {
+        res.status(500).json(res);
+    }
 }
