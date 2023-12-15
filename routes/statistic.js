@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 router.route('/api/statistic/getAverageGpaOfAll').get(auth, getAverageGpaOfAll);
-router.route('/api/statistic/getAverageGpaBySubject').post(auth, getAverageGpaBySubject);
+router.route('/api/statistic/getAverageGpaBySubject').get(auth, getAverageGpaBySubject);
 router.route('/api/statistic/getAverageGpaBySchoolYear').get(auth, getAverageGpaBySchoolYear);
 router.route('/api/statistic/getCreditAndGPAInAllSemesters').get(auth, getCreditAndGPAInAllSemesters);
 router.route('/api/statistic/getAverageCreditBySchoolYear/:startId').get(auth, getAverageCreditBySchoolYear);

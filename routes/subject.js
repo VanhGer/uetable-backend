@@ -5,7 +5,7 @@ import { auth } from '../middlewares/auth.js'
 const router = express.Router();
 
 
-router.route('/api/subject/getSubjectByName').post(auth, getSubjectByName);
+router.route('/api/subject/getSubjectByName').get(auth, getSubjectByName);
 router.route('/api/subject/getSubjectByCode').get(auth, getSubjectByCode);
 router.route('/api/subject/getSubjectInfo').get(auth, getSubjectInfo);
 router.route('/api/subject/getRegisteredSubjectInfo').get(auth, getRegisteredSubjectInfo);
