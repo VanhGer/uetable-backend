@@ -1,5 +1,6 @@
 import Subject from "../models/subject.js";
 import { Op } from "sequelize";
+import sequelize from "../database/db.js";
 import Class from "../models/class.js";
 import UserScore from "../models/userScore.js";
 import SubjectLike from "../models/subjectLike.js";
@@ -92,6 +93,7 @@ export const getSubjectInfo = async (req, res) => {
             if (result.lecturers.includes({'name': teacher})) continue;
             result.lecturers.push(teacher);
         }
+        await saveSubjectAccessTime(id, user.Id);
         res.status(200).json(result);
     } catch (err) {
         res.status(500).json(err.message)
@@ -203,3 +205,26 @@ export const starASubject = async(req, res) => {
     } 
 }
 
+async function saveSubjectAccessTime(subjectId, userId) {
+    try {
+        let theLast = await AccessSubject.findOne({
+            where: {
+                SubjectId: subjectId,
+                UserId: userId, 
+            }
+        });
+        if (theLast === null) {
+            let newAccess = await AccessSubject.create({
+                SubjectId: subjectId,
+                UserId: userId,
+            });
+            await newAccess.save();
+        } else {
+            theLast.LastAccess =  sequelize.literal('CURRENT_TIMESTAMP');
+            await theLast.save();
+        }
+    } catch(err) {
+        throw err;
+    }
+    
+}

@@ -210,7 +210,16 @@ export const getCreditRangeInSemester = async(req, res) => {
     try {   
         // let {params} = req;
         let semId = req.query.semesterId;
+        let sem = await Semester.findOne({
+            raw: true,
+            where: {
+                Id: semId
+            }
+        });
+
+
         let schoolYear = req.query.year;
+
         // console.log(semId, schoolYear);
         let students = await User.findAll({
             raw: true,
@@ -253,7 +262,10 @@ export const getCreditRangeInSemester = async(req, res) => {
         result.push({type: "15-20", value: t20});
         result.push({type: "20-25", value: t25});
         result.push({type: "25-30", value: t30});
-        res.status(200).json(result);
+        let ans = {};
+        ans.semester = sem.Name;
+        ans.result = result;
+        res.status(200).json(ans);
         // res.status(200).json("ok");
     } catch (err) {
         res.status(500).json(err);
