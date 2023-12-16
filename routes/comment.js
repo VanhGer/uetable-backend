@@ -11,10 +11,11 @@ const router = express.Router();
 
 router
   .route('/api/comment/')
-  .get(auth, getCommentId)
   .post(auth, createComment)
   .put(auth, modifyComment)
   .delete(auth, deleteComment)
+
+router.route('/api/comment/:commentid').get(auth, getCommentId)
 
 router
     .route('/api/comment/get-versions/')
