@@ -12,5 +12,5 @@ router.route('/api/score/getAllSemesterInfo').get(auth, getAllSemesterInfo);
 // router.route('/api/score/updateCourseScoreInSemesterById/:userScoreId').put(auth, updateCourseScoreInSemesterById)
 router.route('/api/score/getUserGPA').get(auth, getUserGPA);
 router.route('/api/score/updateSemesterCourseList').post(auth, updateSemesterCourseList);
-router.route('/api/score/getTempGPA').get(auth, getTempGPA);
+router.route('/api/score/getTempGPA').post(auth, getTempGPA);
 export default router;

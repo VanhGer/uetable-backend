@@ -45,7 +45,7 @@ export const getSubjectByCode = async (req, res) => {
 
 export const getSubjectInfo = async (req, res) => {
     try {
-        let id = req.body.subjectId;
+        let id = req.query.subjectId;
         const user = res.locals.decodedUser;
         const subjectList = await Subject.findOne({
             where: {
@@ -100,7 +100,7 @@ export const getSubjectInfo = async (req, res) => {
 
 export const getRegisteredSubjectInfo = async (req, res) => {
     try {
-        let id = req.body.subjectId;
+        let id = req.query.subjectId;
         const user = res.locals.decodedUser;
         const subject = await Subject.findOne({
             where: {
@@ -245,15 +245,49 @@ export const getPartSubject = async (req, res) => {
             c.lastAccess = await getLastAccessTime(c.Id, user.Id);
         }
 
-        console.log(subjectList);
+        let newSubj;
         if (req.body.sortBy == "stared") {
-            
-            const newSubj = subjectList.sort((a, b) => b.star - a.star);
+            newSubj = subjectList.sort((a, b) => b.star - a.star);
             
         } else if (req.body.sortBy == "rating"){
-            
+            newSubj = subjectList.sort((a, b) => b.likes - a.likes);
+        } else {
+            newSubj = subjectList.sort((a, b) => b.getLastAccessTime - a.getLastAccessTime);
+            // console.log(newSubj);
         }
-        res.status(200).json("ok");
+
+        let result = [];
+        for (let c of newSubj) {
+            let tmp = {};
+            let userScore = await UserScore.findOne({
+                raw: true,
+                where: {
+                    SubjectId: c.Id,
+                    UserId: user.Id
+                }
+            });
+            let score = 0;
+            if (userScore == null) {score = "haven't studied";}
+            else {
+                let sc = await Score.findOne({
+                    where: {
+                        Id: userScore.ScoreId
+                    }
+                });
+                score = {'final': sc.total10};
+            }
+            tmp.id = c.Code;
+            tmp.name = c.Name;
+            tmp.credits = c.Credit;
+            tmp.type = "all";
+            tmp.score = score;
+            tmp.like = c.likes;
+            tmp.stared = c.star;
+            tmp.documents = await getNumberDocument(c.Id);
+            // tmp.letterGrade = await getFinalScore(c.Id, user.Id);
+            result.push(tmp);
+        }
+        res.status(200).json(result); 
         
 
     } catch (err) {
