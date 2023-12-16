@@ -37,25 +37,34 @@ async function calAverageGpa(listOfStudents) {
         let ans;
         let gpa10 = 0.0, gpa4 = 0.0, num = 0;
         let range = [0, 0, 0, 0, 0];
+        let result = [];
         for (let student of listOfStudents) {
-            let cur = await getUserGPAById(student.Id);
-            if (cur.credits == 0) {
-                continue;
-            }  else {
-                num++;
-                gpa10 += cur.gpa10;
-                gpa4 += cur.gpa4;
-                let tmp = getRangeMark(gpa4);
-                range[tmp]++;
+            try {
+                let cur = await getUserGPAById(student.Id);
+                if (cur.credits == 0) {
+                    continue;
+                }  else {
+                    num++;
+                    gpa10 += cur.gpa10;
+                    gpa4 += cur.gpa4;
+                    let tmp = getRangeMark(gpa4);
+                    range[tmp]++;
+                }
+            } catch (err) {
+                throw err;
             }
+            
         }
+        // console.log("a");
         if (num == 0) ans = {students: 0, gpa10: 0, gpa4: 0};
         else {
             ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
         }
         for (let i = 0; i < 5; i++) {
-            ans[keyRangeMark[i]] = range[i];
+            let tmp = {'type': keyRangeMark[i], 'value': range[i]};
+            result.push(tmp);
         }
+        ans['result'] = result;
         return ans;
     } catch (err) {
         throw err;
@@ -79,28 +88,17 @@ export const getAverageGpaOfAll = async (req, res) => {
 
 export const getAverageGpaBySubject = async(req, res) => {
     try {
-        let subjectName = req.body.subjectName;  
-        let subject = await Subject.findOne({
-            raw: true,
-            where: {
-                Name: {
-                    [Op.like]: `%${subjectName}%`
-                }
-            }
-        });
-        if (subject === null) {
-            res.status(404).json("Not found the subject");
-            return;
-        }
+        let subjectId = req.query.subjectId;  
+        console.log(subjectId);
         let scores = await UserScore.findAll({
             raw: true,
             where: {
-                SubjectId: subject.Id
+                SubjectId: subjectId
             },
             include: [Score],
             attributes: ['Score.total10', 'Score.total4']
         });
-       
+        console.log(scores);
         let ans;
         let gpa10 = 0, gpa4 = 0, num = 0;
         let numtotal = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -116,7 +114,6 @@ export const getAverageGpaBySubject = async(req, res) => {
         else {
             ans = {students: num, gpa10: (gpa10/num), gpa4: (gpa4/num)};
         }
-        ans['name'] = subject.Name;
         for (let i = 0; i < 9; i++) {
             ans[keyMark[i]] = numtotal[i];
         }
@@ -130,7 +127,7 @@ export const getAverageGpaBySubject = async(req, res) => {
 
 export const getAverageGpaBySchoolYear = async(req, res) => {
     try {   
-        let schoolYear = req.body.schoolYear;
+        let schoolYear = req.query.schoolYear;
         let students = await User.findAll({
             raw: true,
             where: {
@@ -139,7 +136,7 @@ export const getAverageGpaBySchoolYear = async(req, res) => {
                 }
             }
         });
-        // console.log("33", students);
+        // console.log("33", students.length);
         let ans = await calAverageGpa(students);
         res.status(200).json(ans);
         // res.status(200).json("ok");
@@ -211,8 +208,19 @@ export const getAverageCreditBySchoolYear = async(req, res) => {
 
 export const getCreditRangeInSemester = async(req, res) => {
     try {   
-        let semId = req.body.semesterId;
-        let schoolYear = req.body.year;
+        // let {params} = req;
+        let semId = req.query.semesterId;
+        let sem = await Semester.findOne({
+            raw: true,
+            where: {
+                Id: semId
+            }
+        });
+
+
+        let schoolYear = req.query.year;
+
+        // console.log(semId, schoolYear);
         let students = await User.findAll({
             raw: true,
             where: {
@@ -254,7 +262,10 @@ export const getCreditRangeInSemester = async(req, res) => {
         result.push({type: "15-20", value: t20});
         result.push({type: "20-25", value: t25});
         result.push({type: "25-30", value: t30});
-        res.status(200).json(result);
+        let ans = {};
+        ans.semester = sem.Name;
+        ans.result = result;
+        res.status(200).json(ans);
         // res.status(200).json("ok");
     } catch (err) {
         res.status(500).json(err);
