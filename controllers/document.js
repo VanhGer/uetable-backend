@@ -56,3 +56,7 @@ export const getDocumentById = async (req, res) => {
         res.status(500).json(err.message);
     }
 }  
+
+export const getDocumentOfSubject = async (req, res) => {
+    
+}
