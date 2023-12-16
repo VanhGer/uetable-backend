@@ -5,7 +5,8 @@ import UserLike from "../models/userLike.js";
 
 export const getCommentByPage = async (req, res) => {
     try {
-        const { pageId , pageType, offset, limit} = req.body;
+        const { pageId , pageType, offset, limit} = req.params
+        // const { offset, limit} = req.query;
         const decodedUser = res.locals.decodedUser
         const comments = await PageComment.findAll({
             where: {
@@ -13,8 +14,8 @@ export const getCommentByPage = async (req, res) => {
                 pageType: pageType,
                 parentId: 0,
             },
-            offset: offset,
-            limit: limit,
+            offset: parseInt(offset),
+            limit: parseInt(limit),
         });
 
         const commentDTOs = await Promise.all(comments.map( async (comment) => {
@@ -33,7 +34,7 @@ export const getCommentByPage = async (req, res) => {
 
 export const getCommentCountByPage = async (req, res) => {
     try {
-        const { pageId , pageType } = req.body;
+        const { pageId , pageType } = req.params
         const comments = await PageComment.count({
             where: {
                 PageId: pageId,
@@ -86,7 +87,7 @@ export const likeByPage = async (req, res) => {
 
 export const getLikeByPage = async (req, res) => {
     try {
-        const { pageId , pageType } = req.body;
+        const { pageId , pageType } = req.params
         const decodedUser = res.locals.decodedUser
         const likes = await UserLike.count({
             where: {
