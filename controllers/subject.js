@@ -63,7 +63,7 @@ export const getSubjectInfo = async (req, res) => {
             }
         });
         let score = 0, type = "registered"
-        if (userScore == null) {score = "haven't studied"; type = "haven't registered"}
+        if (userScore == null) {score = {'final': null}; type = "haven't registered"}
         else {
             let sc = await Score.findOne({
                 where: {
@@ -75,7 +75,8 @@ export const getSubjectInfo = async (req, res) => {
         let stared = true;
         if (userLike === null) stared = false;
         let result = {};
-        result.id = subjectList.Code;
+        result.id = subjectList.Id;
+        result.code = subjectList.Code;
         result.name = subjectList.Name;
         result.credits = subjectList.Credit;
         result.score = score;
@@ -120,7 +121,8 @@ export const getRegisteredSubjectInfo = async (req, res) => {
             include: Score
         });
         let result = {};
-        result.id = subject.Code;
+        result.code = subject.Code;
+        result.id = subject.Id;
         result.name = subject.Name;
         result.credits = subject.Credit;
         result.score = {};
@@ -276,7 +278,8 @@ export const getPartSubject = async (req, res) => {
                 });
                 score = {'final': sc.total10};
             }
-            tmp.id = c.Code;
+            tmp.code = c.Code;
+            tmp.id = c.Id;
             tmp.name = c.Name;
             tmp.credits = c.Credit;
             tmp.type = "all";
