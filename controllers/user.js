@@ -124,7 +124,7 @@ export const getUserHandles = async (req, res) => {
         // console.log(users)
 
         const studentids = users.map((user) => UserHandleDTO.convertToDto(user))
-
+        
         res.status(200).send({
             studentids,
         })

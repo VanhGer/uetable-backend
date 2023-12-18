@@ -8,6 +8,7 @@ export default class UserDTO {
       name: user.Name,
       studentId: user.StudentId,
       date: user.Birth,
+      bio: user.Bio,
       avatar: user.Avatar ? user.Avatar : null,
     }
   }
