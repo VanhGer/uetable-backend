@@ -5,6 +5,7 @@ import Subject from '../models/subject.js';
 import User from '../models/user.js';
 import Score from '../models/score.js';
 import { Op } from 'sequelize';
+import fetch from 'node-fetch';
 
 async function getCoursebyStudentId(studentId, term_id) {
   try {
@@ -102,9 +103,9 @@ async function crawlAllCourseWithInitMark(studentCreated) {
     if (Array.isArray(cur) && cur.length === 1 && Object.keys(cur[0]).length === 0 && cur[0].constructor === Object) {
       continue;
     }
-    // console.log(cur.length);
-    // console.log(cur);
-    // console.log(cur[0]);
+     console.log(cur.length);
+     console.log(cur);
+     console.log(cur[0]);
     for (let c of cur) {
       // if (c) console.log(c);
       let curSubject = await Subject.findOne({
