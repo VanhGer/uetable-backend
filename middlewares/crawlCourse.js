@@ -97,6 +97,7 @@ async function getCoursebyStudentId(studentId, term_id) {
 // }
 
 async function crawlAllCourseWithInitMark(studentCreated) {
+  
   for (let termId = START_TERM_ID; termId <= CUR_TERM_ID; termId++) {
     
     let cur = await getCoursebyStudentId(studentCreated.StudentId, termId);
