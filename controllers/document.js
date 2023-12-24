@@ -128,3 +128,47 @@ export const getDocumentOfSubject = async (req, res) => {
     
     
 }
+
+export const getMyDocumentByStudentId = async(req, res) => {
+    try {
+        let studentId = req.query.studentId;
+        let user = await User.findOne({
+            raw: true,
+            where: {
+                StudentId: studentId
+            }
+        });
+        if (user === null) {
+            res.status(404).json("User not found");
+            return;
+        }
+        let documentList = await Document.findAll({
+            raw: true,
+            where: {
+                UserId: user.Id
+            }
+        });
+        let result = [];
+        for (let c of documentList) {
+            let user = await User.findOne({
+                raw: true,
+                where: {
+                    Id: c.UserId,
+                }
+            });
+            let tmp = {};
+            tmp.id = c.Id;
+            tmp.name = c.Name;
+            tmp.createAt = c.CreateAt;
+            tmp.like = await getPageLikes(c.Id, 'D');
+            tmp.download = c.Download;
+            tmp.category = c.Category;
+            tmp.link = c.Link;
+            tmp.userName = user.Name;
+            result.push(tmp);
+        }
+        res.status(200).json(result);
+    } catch(err) {
+        res.status(500).json(err);
+    }
+}
