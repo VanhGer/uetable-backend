@@ -150,12 +150,6 @@ export const getMyDocumentByStudentId = async(req, res) => {
         });
         let result = [];
         for (let c of documentList) {
-            let user = await User.findOne({
-                raw: true,
-                where: {
-                    Id: c.UserId,
-                }
-            });
             let tmp = {};
             tmp.id = c.Id;
             tmp.name = c.Name;
@@ -164,7 +158,6 @@ export const getMyDocumentByStudentId = async(req, res) => {
             tmp.download = c.Download;
             tmp.category = c.Category;
             tmp.link = c.Link;
-            tmp.userName = user.Name;
             result.push(tmp);
         }
         res.status(200).json(result);
