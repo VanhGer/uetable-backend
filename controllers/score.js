@@ -144,7 +144,7 @@ export const updateSemesterCourseList = async(req, res) => {
         // console.log(subjectCodes);
         let subjectInfo = [];
         for (let c of subjects) {
-            let cCode = c.id;
+            let cCode = c.code;
             let cInfo = await Subject.findOne({
                 raw: true, 
                 where: {
