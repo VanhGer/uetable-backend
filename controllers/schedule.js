@@ -67,7 +67,7 @@ export const getScheduleInWeek = async (req, res) => {
         let result = [];
         for (let c of eventList) {
             let tmp = {};
-            tmp.id = c.id;
+            tmp.eventId = c.id;
             tmp.name = c.name;
             let cur_start = `${c.day}T${c.timeStart}`;
             tmp.timeStart = new Date(cur_start);

@@ -29,7 +29,10 @@ export const createEvent = async (req, res) => {
             ScheduleId: sche.Id,
         });
         await newEvent.save();
-        res.status(200).json("create successfully");
+        let ans = {};
+        ans.msg = "Created successfully";
+        ans.eventId = newEvent.Id;
+        res.status(200).json(ans);
     } catch (err) {
         res.status(500).json(err.message);
     }
