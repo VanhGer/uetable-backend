@@ -10,20 +10,20 @@ import Subject from "../models/subject.js";
 export const createComment = async (req, res) => {
     try {
         let { content, pageType, pageId, parentId, preCommentId } = req.body;
-        if (pageType === 'S') {
-            const subject = await Subject.findOne({
-                where: {
-                    Code: pageId
-                }
-            })
-            if (!subject) {
-                res.status(404).send({ error: 'Subject not found' })
-                return
-            }
-            // console.log(subject)
-            pageId = subject.Id
-        }
-        console.log(pageId)
+        // if (pageType === 'S') {
+        //     const subject = await Subject.findOne({
+        //         where: {
+        //             Code: pageId
+        //         }
+        //     })
+        //     if (!subject) {
+        //         res.status(404).send({ error: 'Subject not found' })
+        //         return
+        //     }
+        //     // console.log(subject)
+        //     pageId = subject.Id
+        // }
+        // console.log(pageId)
         const decodedUser = res.locals.decodedUser
         const comment = await Comment.create({
             Content: content,

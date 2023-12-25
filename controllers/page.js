@@ -12,7 +12,7 @@ export const getCommentByPage = async (req, res) => {
             where: {
                 PageId: pageId,
                 pageType: pageType,
-                parentId: 0,
+                // parentId: 0,
             },
             offset: parseInt(offset),
             limit: parseInt(limit),
@@ -24,6 +24,10 @@ export const getCommentByPage = async (req, res) => {
             const commentDTO = await CommentDTO.convertToDto(commentModel, decodedUser.Id);
             return commentDTO;
         }));
+
+        // commentDTOs.sort((a, b) => {
+        //     return b.timestamp - a.timestamp;
+        // });
 
         // console.log(commentDTOs)
         res.status(200).send(commentDTOs);
