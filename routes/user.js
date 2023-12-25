@@ -12,6 +12,7 @@ import {
   forgotPassword,
 } from '../controllers/user.js'
 import { auth } from '../middlewares/auth.js'
+import { superAuth } from '../middlewares/superauth.js'
 
 const router = express.Router()
 
@@ -26,7 +27,7 @@ router.route('/api/users/activate/:token').get(activateAccount)
 router.route('/api/users/forgot-password/').post(forgotPassword)
 router.route('/api/users/reset/:token').post(resetPassword)
 router.route('/api/users/auth').post(authenticateUser)
-router.route('/api/users/:studentid').get(auth, getUsersByStudentId)
+router.route('/api/users/:studentid').get(superAuth, getUsersByStudentId)
 router.route('/api/users/change-password/').post(auth, changePassword)
 
 export default router;
