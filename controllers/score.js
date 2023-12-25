@@ -40,7 +40,8 @@ export async function semesterInfoById(userId, id) {
             let subj = {};
             let sco = {};
             // subj.userScoreId = c['Id'];
-            subj.id = c["Subject.Code"];
+            subj.id = c["Subject.Id"];
+            subj.code = c["Subject.Code"];
             subj.name = c["Subject.Name"];
             subj.credits = c["Subject.Credit"];
             // subj.type = "registered";
