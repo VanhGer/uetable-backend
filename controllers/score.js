@@ -40,7 +40,8 @@ export async function semesterInfoById(userId, id) {
             let subj = {};
             let sco = {};
             // subj.userScoreId = c['Id'];
-            subj.id = c["Subject.Code"];
+            subj.id = c["Subject.Id"];
+            subj.code = c["Subject.Code"];
             subj.name = c["Subject.Name"];
             subj.credits = c["Subject.Credit"];
             // subj.type = "registered";
@@ -52,7 +53,7 @@ export async function semesterInfoById(userId, id) {
             sco.final4 = c["Score.total4"];
             subj.score = sco;
             result.subjects.push(subj);
-            if (subj.id.startsWith("PES") == false) { 
+            if (subj.code.startsWith("PES") == false) { 
                 
                 result.sumOfCredits += subj.credits;
                 result.totalMark10 += sco.final * subj.credits;
@@ -114,6 +115,7 @@ export const getAllSemesterInfo = async(req, res) => {
                 // result.totalGPA4 += semInfo.totalMark4;
                 delete semInfo.cnt;
                 delete semInfo.totalMark10;
+                console.log(semInfo);
                 if (semInfo.subjects.length > 0) {
                     result.semesterInfo.push(semInfo);
                 }
@@ -142,7 +144,7 @@ export const updateSemesterCourseList = async(req, res) => {
         // console.log(subjectCodes);
         let subjectInfo = [];
         for (let c of subjects) {
-            let cCode = c.id;
+            let cCode = c.code;
             let cInfo = await Subject.findOne({
                 raw: true, 
                 where: {
@@ -208,7 +210,7 @@ function calGPA(listOfSubjects) {
     let total = 0.0;
     let credits = 0;
     for (let c of listOfSubjects) {
-        if (c.id.startsWith("PES")) continue;
+        if (c.code.startsWith("PES")) continue;
         credits += c.credits;
         total += c.score.final * c.credits;
     }
@@ -237,7 +239,7 @@ async function calTempAllGPA(listOfSubjects, userId, semId) {
         cres += c.Credit;
     }
     for (let c of listOfSubjects) {
-        if (c.id.startsWith("PES")) continue;
+        if (c.code.startsWith("PES")) continue;
         cres += c.credits;
         total10 += c.score.final * c.credits;
     }
@@ -319,7 +321,7 @@ async function calTempYearGPA(listOfSubjects, userId, semId) {
         }
 
         for (let c of listOfSubjects) {
-            if (c.id.startsWith("PES")) continue;
+            if (c.code.startsWith("PES")) continue;
             // console.log(c);
             cres += c.credits;
             total10 += c.score.final * c.credits;

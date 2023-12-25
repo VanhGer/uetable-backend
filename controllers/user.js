@@ -124,7 +124,7 @@ export const getUserHandles = async (req, res) => {
         // console.log(users)
 
         const studentids = users.map((user) => UserHandleDTO.convertToDto(user))
-
+        
         res.status(200).send({
             studentids,
         })
@@ -364,5 +364,40 @@ export const changePassword = async (req, res) => {
         }
     } catch (error) {
         res.status(500).send(error)
+    }
+}
+
+export const changeAvatar = async (req, res) => {
+    try {
+        const decodedUser = res.locals.decodedUser;
+        let user = await User.findOne({
+            where: {
+                Id: decodedUser.Id
+            }
+        });
+        user.Avatar = req.file.path;
+        await user.save();
+        res.status(200).json("Changed successfully");
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+}
+
+export const changeBio = async(req, res) => {
+    try {
+        let bio = req.body.bio;
+        console.log(bio);
+        let decodedUser = res.locals.decodedUser;
+        let user = await User.findOne({
+            where: {
+                Id: decodedUser.Id
+            }
+        });
+        // console.log(user);
+        user.Bio = bio;
+        await user.save();
+        res.status(200).json("changed successfully!")
+    } catch (err) {
+        res.status(500).json(err);
     }
 }

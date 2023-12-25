@@ -10,10 +10,12 @@ import {
   activateAccount,
   resetPassword,
   forgotPassword,
+  changeAvatar,
+  changeBio,
 } from '../controllers/user.js'
 import { auth } from '../middlewares/auth.js'
 import { superAuth } from '../middlewares/superauth.js'
-
+import { avatarUpload } from '../middlewares/cloud.js';
 const router = express.Router()
 
 router
@@ -29,5 +31,7 @@ router.route('/api/users/reset/:token').post(resetPassword)
 router.route('/api/users/auth').post(authenticateUser)
 router.route('/api/users/:studentid').get(superAuth, getUsersByStudentId)
 router.route('/api/users/change-password/').post(auth, changePassword)
+router.post('/api/users/changeAvatar', auth, avatarUpload.single('up'), changeAvatar);
+router.route('/api/users/changeBio').post(auth, changeBio);
 
 export default router;

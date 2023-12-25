@@ -12,11 +12,23 @@ cloudinary.config({
 
 const docStorage = new CloudinaryStorage({
   cloudinary,
-  allowedFormats: ['raw', 'jpg', 'png', 'pdf', 'zip', 'rar', 'docx', 'ppt', 'pptx'],
+  allowedFormats: ['raw', 'jpg', 'png', 'pdf', 'zip', 'rar', 'ppt', 'pptx'],
   params: {
     folder: 'uetable/Document'
   }
 });
 
 const docUpload = multer({ storage: docStorage });
-export {docUpload}
+
+
+const avatarStorage = new CloudinaryStorage({
+  cloudinary,
+  allowedFormats: ['raw', 'jpg', 'png', 'pdf', 'zip', 'rar', 'ppt', 'pptx'],
+  params: {
+    folder: 'uetable/Avatar'
+  }
+});
+
+const avatarUpload = multer({ storage: avatarStorage });
+
+export {docUpload, avatarUpload};

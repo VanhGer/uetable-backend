@@ -216,7 +216,10 @@ export const getCreditRangeInSemester = async(req, res) => {
                 Id: semId
             }
         });
-
+        if (sem === null) {
+            res.status(404).json("semester not found");
+            return;
+        }
 
         let schoolYear = req.query.year;
 
@@ -230,6 +233,7 @@ export const getCreditRangeInSemester = async(req, res) => {
             }
         });
 
+    
         // console.log(students.length);
         let t10 = 0, t15 = 0, t20 = 0, t25 = 0, t30 = 0; 
         for (let student of students) {

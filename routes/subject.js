@@ -9,7 +9,7 @@ router.route('/api/subject/getSubjectByName').get(auth, getSubjectByName);
 router.route('/api/subject/getSubjectByCode').get(auth, getSubjectByCode);
 router.route('/api/subject/getSubjectInfo').get(auth, getSubjectInfo);
 router.route('/api/subject/getRegisteredSubjectInfo').get(auth, getRegisteredSubjectInfo);
-router.route('/api/subject/getPartSubject').get(auth, getPartSubject);
+router.route('/api/subject/getPartSubject').post(auth, getPartSubject);
 
 router.route('/api/subject/getSubjectHaveNotLearn').get(auth, getSubjectHaveNotLearn);
 export default router;

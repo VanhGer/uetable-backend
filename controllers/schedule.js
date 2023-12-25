@@ -64,12 +64,28 @@ export const getScheduleInWeek = async (req, res) => {
         });
         //console.log(eventList);
         //res.status(200).json(eventList);
-        const eventListRes = eventList.map(({id, name, timeStart, timeEnd, day, location, info, color,
-            classCode, teacher, number, group, weekday, lessonStart, lessonEnd, creadit}) => ({ id, name, 
-            timeStart, timeEnd, day, location, info, color, classCode, teacher, number, group, 
-            weekday, lessonStart, lessonEnd, creadit }));
+        let result = [];
+        for (let c of eventList) {
+            let tmp = {};
+            tmp.eventId = c.id;
+            tmp.name = c.name;
+            let cur_start = `${c.day}T${c.timeStart}`;
+            tmp.timeStart = new Date(cur_start);
+            tmp.timeStart.setHours(tmp.timeStart.getHours() + 7);
+            let cur_end = `${c.day}T${c.timeEnd}`;
+            tmp.timeEnd = new Date(cur_end);
+            tmp.timeEnd.setHours(tmp.timeEnd.getHours() + 7);
+            tmp.color = c.color;
+            tmp.location = c.location;
+            tmp.info = c.info;
+            result.push(tmp);
+        }
+        // const eventListRes = eventList.map(({id, name, timeStart, timeEnd, day, location, info, color,
+        //     classCode, teacher, number, group, weekday, lessonStart, lessonEnd, creadit}) => ({ id, name, 
+        //     timeStart, timeEnd, day, location, info, color, classCode, teacher, number, group, 
+        //     weekday, lessonStart, lessonEnd, creadit }));
 
-        res.status(200).json(eventListRes);
+        res.status(200).json(result);
     } catch (err) {
         res.status(500).json(err.message);
     }
