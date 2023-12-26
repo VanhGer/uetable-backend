@@ -253,7 +253,7 @@ export const authenticateUser = async (req, res) => {
     try {
         const { body } = req
         const user = await User.findOne({
-            attributes: ['Id', 'Name', 'StudentId', 'PasswordHash'],
+            attributes: ['Id', 'Name', 'StudentId', 'PasswordHash', 'Role'],
             where: {
                 StudentId: body.studentid,
             },

@@ -10,6 +10,7 @@ import Subject from "../models/subject.js";
 export const createComment = async (req, res) => {
     try {
         let { content, pageType, pageId, parentId, preCommentId } = req.body;
+        
         // if (pageType === 'S') {
         //     const subject = await Subject.findOne({
         //         where: {
