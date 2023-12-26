@@ -1,7 +1,7 @@
 import { DataTypes} from "sequelize";
 import Subject from "./subject.js";
 import sequelize from "../database/db.js";
-const Documment = sequelize.define("Document", {
+const Document = sequelize.define("Document", {
     Id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -53,8 +53,8 @@ const Documment = sequelize.define("Document", {
  });
 
 
-Subject.hasMany(Documment);
-Documment.belongsTo(Subject, {
+Subject.hasMany(Document);
+Document.belongsTo(Subject, {
     foreignKey: 'SubjectId'
 })
- export default Documment;
+ export default Document;

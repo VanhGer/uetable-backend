@@ -12,6 +12,7 @@ import ScoreRouter from './routes/score.js';
 import ReportRouter from './routes/report.js';
 import StatisticRouter from './routes/statistic.js';
 import AdminRouter from './routes/admin.js';
+import NotificationRouter from './routes/notification.js'
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import AdminJS from 'adminjs'
@@ -51,6 +52,7 @@ app.use('/', ScoreRouter);
 app.use('/', StatisticRouter);
 app.use('/', ReportRouter);
 app.use('/', AdminRouter);
+app.use('/', NotificationRouter);
 
 const DEFAULT_ADMIN = {
   studentid: '21020006',
