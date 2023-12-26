@@ -253,6 +253,7 @@ export const authenticateUser = async (req, res) => {
     try {
         const { body } = req
         const user = await User.findOne({
+            attributes: ['Id', 'Name', 'StudentId', 'PasswordHash'],
             where: {
                 StudentId: body.studentid,
             },
@@ -264,6 +265,8 @@ export const authenticateUser = async (req, res) => {
             })
             return
         }
+
+        // console.log(user)
 
         const authToken = Authentication.generateAuthToken(user)
         // res.cookie('authToken', authToken, {
