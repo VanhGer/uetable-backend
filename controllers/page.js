@@ -2,6 +2,9 @@ import Comment from "../models/comment.js";
 import PageComment from "../models/pageComment.js";
 import CommentDTO from "../dto/comments.js";
 import UserLike from "../models/userLike.js";
+import Document from "../models/document.js";
+import Page from "../models/page.js";
+import { createNoti } from "./notification.js";
 
 export const getCommentByPage = async (req, res) => {
     try {
@@ -76,6 +79,38 @@ export const likeByPage = async (req, res) => {
                 Score: score,
             });
             await newUserLike.save();
+            if (pageType === 'D') {
+                let document = await Document.findOne({
+                    raw: true,
+                    where: {
+                        Id: pageId
+                    }
+                });
+                let page = await Page.findOne({
+                    raw: true, 
+                    where: {
+                        PageId: pageId
+                    }
+                })
+                let name = decodedUser.Name; 
+                await createNoti(document.UserId, `${name} đã thích tài liệu ${document.Name} của bạn`, page.PageUrl);
+            } else if (pageType === 'C') {
+                let comment = await Comment.findOne({
+                    raw: true,
+                    where: {
+                        Id: pageId
+                    }
+                });
+                let page = await Page.findOne({
+                    raw: true, 
+                    where: {
+                        PageId: pageId
+                    }
+                })
+                let name = decodedUser.Name; 
+                let content = comment.Content.substring(0, 20);
+                await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, page.PageUrl);
+            }
         } else {
             userLike.Score = score;
             await userLike.save();
