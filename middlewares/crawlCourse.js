@@ -7,6 +7,16 @@ import Score from '../models/score.js';
 import { Op } from 'sequelize';
 import fetch from 'node-fetch';
 
+function trimClass(str) {
+  let tmp = str.replace(" (CLC)", "");
+  let words = tmp.split(" ");
+  if (words.length == 2) return words[0];
+  let res = tmp.replace(/\s+/, "");
+  let ans = res.split(" ");
+  return ans[0];
+}
+
+
 async function getCoursebyStudentId(studentId, term_id) {
   try {
     const response = await fetch(`http://112.137.129.87/qldt/index.php?SinhvienLmh%5BmasvTitle%5D=${studentId}&SinhvienLmh%5BhotenTitle%5D=&SinhvienLmh%5BngaysinhTitle%5D=&SinhvienLmh%5BlopkhoahocTitle%5D=&SinhvienLmh%5BtenlopmonhocTitle%5D=&SinhvienLmh%5BtenmonhocTitle%5D=&SinhvienLmh%5Bnhom%5D=&SinhvienLmh%5BsotinchiTitle%5D=&SinhvienLmh%5Bghichu%5D=&SinhvienLmh%5Bterm_id%5D=0${term_id}&SinhvienLmh_page=1&ajax=sinhvien-lmh-grid&pageSize=50&r=sinhvienLmh%2Fadmin`);
@@ -31,6 +41,9 @@ async function getCoursebyStudentId(studentId, term_id) {
           const key = "class";
           const value = $(tdElement).text().trim();
           row[key] = value;
+
+          let subjectCode = trimClass(value);
+          row["subjectCode"] = subjectCode;
         } else if (tdIndex == 6) {
           const key = "name";
           const value =  $(tdElement).text().trim();
@@ -112,9 +125,17 @@ async function crawlAllCourseWithInitMark(studentCreated) {
       let curSubject = await Subject.findOne({
         raw: true,
         where: {
-          Name: c.name
+          Code: c.subjectCode
         }
       });
+      if (curSubject === null) {
+        curSubject = await Subject.findOne({
+          raw: true,
+          where: {
+            Name: c.name
+          }
+        })
+      }
       // console.log(curSubject);
       const newScore = await Score.create({
         total10: 0
@@ -138,7 +159,20 @@ async function crawlAllCourseWithInitMark(studentCreated) {
 //     StudentId: "21020051"
 //   }
 // })
+// console.log("start");
 // crawlAllCourseWithInitMark(curStudent)
+// async function main() {
+//   let curSubject = await Subject.findOne({
+//     raw: true,
+//     where: {
+//       Code: "INT3110"
+//     }
+//   });
+//   if (curSubject === null) console.log("ok"); 
+//   console.log(curSubject);
+// }
+// main();
+
 // let res = await getCoursebyStudentId(21020001, 33);
 // console.log(res);
 export {getCoursebyStudentId, crawlAllCourseWithInitMark};

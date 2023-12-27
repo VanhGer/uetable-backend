@@ -1,6 +1,6 @@
 import fs from 'fs';
 import cheerio from 'cheerio';
-
+import fetch from 'node-fetch';
 let keyNames = ["STT", "SubjectCode", "Name", "Credit", "ClassCode", "Teacher", "NumberStudent", 
 "Session", "Weekday", "Lesson", "Location", "Group"];
 
