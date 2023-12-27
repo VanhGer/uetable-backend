@@ -74,7 +74,7 @@ export const getDocumentById = async (req, res) => {
                 let tmp = {};
                 tmp.id = doc.Id;
                 tmp.name = doc.Name;
-                tmp.createAt = doc.CreatedAt;
+                tmp.createdAt = doc.CreatedAt;
                 tmp.like = await getPageLikes(doc.Id, 'D');
                 tmp.download = doc.Download;
                 tmp.category = doc.Category;
@@ -112,7 +112,7 @@ export const getDocumentOfSubject = async (req, res) => {
             let tmp = {};
             tmp.id = c.Id;
             tmp.name = c.Name;
-            tmp.createAt = c.CreateAt;
+            tmp.createdAt = c.CreatedAt;
             tmp.like = await getPageLikes(c.Id, 'D');
             tmp.download = c.Download;
             tmp.category = c.Category;
@@ -154,7 +154,7 @@ export const getMyDocumentByStudentId = async(req, res) => {
             let tmp = {};
             tmp.id = c.Id;
             tmp.name = c.Name;
-            tmp.createAt = c.CreateAt;
+            tmp.createdAt = c.CreatedAt;
             tmp.like = await getPageLikes(c.Id, 'D');
             tmp.download = c.Download;
             tmp.category = c.Category;
