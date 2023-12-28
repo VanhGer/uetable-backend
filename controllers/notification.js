@@ -1,5 +1,6 @@
 import Notification from "../models/notification.js";
-
+import User from "../models/user.js";
+import UserDTO from '../dto/users.js'
 export async function createNoti(userId, content, link = null) {
     try {
         let newNoti = await Notification.create({
@@ -24,10 +25,24 @@ export const getNotification = async (req, res) => {
                 UserId: user.Id
             }
         });
-        let ans = {};
+        let ans = [];
 
         if (notiList === null) res.status(200).json(ans);
-        else res.status(200).json(notiList);
+        else {
+
+            for (let c of notiList) {
+                let sender = await User.findOne({
+                    raw: true,
+                    where: {
+                        Id: c.userId
+                    }
+                });
+                c.author = await UserHandleDTO.convertToDto(user);
+                delete c.userId;
+                ans.push(c);
+            }
+            res.status(200).json(ans);
+        }
     } catch (err) {
         res.status(500).json(err);
     }
