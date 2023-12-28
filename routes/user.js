@@ -29,7 +29,7 @@ router.route('/api/users/activate/:token').get(activateAccount)
 router.route('/api/users/forgot-password/').post(forgotPassword)
 router.route('/api/users/reset/:token').post(resetPassword)
 router.route('/api/users/auth').post(authenticateUser)
-router.route('/api/users/:studentid').get(superAuth, getUsersByStudentId)
+router.route('/api/users/:studentid').get(auth, getUsersByStudentId)
 router.route('/api/users/change-password/').post(auth, changePassword)
 router.post('/api/users/changeAvatar', auth, avatarUpload.single('up'), changeAvatar);
 router.route('/api/users/changeBio').post(auth, changeBio);
