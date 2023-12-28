@@ -147,7 +147,8 @@ export const getMyDocumentByStudentId = async(req, res) => {
             raw: true,
             where: {
                 UserId: user.Id
-            }
+            }, 
+            include: [Subject]
         });
         let result = [];
         for (let c of documentList) {
@@ -159,6 +160,8 @@ export const getMyDocumentByStudentId = async(req, res) => {
             tmp.download = c.Download;
             tmp.category = c.Category;
             tmp.link = c.Link;
+            tmp.subjectName = c["Subject.Name"];
+
             result.push(tmp);
         }
         res.status(200).json(result);
