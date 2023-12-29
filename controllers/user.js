@@ -280,6 +280,7 @@ export const authenticateUser = async (req, res) => {
             message: 'Authentication successful',
             authToken,
             studentid: user.studentid,
+            role: user.Role === 1 ? 'admin' : 'user',
         })
     } catch (error) {
         res.status(500).send({ 'Error message': error.toString() })

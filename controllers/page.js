@@ -5,18 +5,35 @@ import UserLike from "../models/userLike.js";
 import Document from "../models/document.js";
 import Page from "../models/page.js";
 import { createNoti } from "./notification.js";
+import Subject from "../models/subject.js";
 
 export const getCommentByPage = async (req, res) => {
     try {
         const { pageId , pageType, offset, limit} = req.params
+        // if (pageType === 'S') {
+        //     const subject = await Subject.findOne({
+        //         where: {
+        //             Id: pageId
+        //         }
+        //     });
+        // }
         // const { offset, limit} = req.query;
         const decodedUser = res.locals.decodedUser
         const comments = await PageComment.findAll({
+            include: [
+              {
+                model: Comment,
+                required: true,
+              }  
+            ],
             where: {
                 PageId: pageId,
                 pageType: pageType,
-                // parentId: 0,
+                parentId: 0,
             },
+            order: [
+                [Comment, 'CreatedAt', 'DESC']
+            ],
             offset: parseInt(offset),
             limit: parseInt(limit),
         });
@@ -46,7 +63,7 @@ export const getCommentCountByPage = async (req, res) => {
             where: {
                 PageId: pageId,
                 pageType: pageType,
-                parentId: 0,
+                // parentId: 0,
             },
         });
 
@@ -62,6 +79,7 @@ export const getCommentCountByPage = async (req, res) => {
 export const likeByPage = async (req, res) => {
     try {
         const { pageId , pageType , score} = req.body;
+        // console.log(pageId , pageType , score)
         const decodedUser = res.locals.decodedUser
         const userLike = await UserLike.findOne({
             where: {
@@ -71,7 +89,7 @@ export const likeByPage = async (req, res) => {
             },
         });
 
-        if (!userLike) {
+        if (!userLike && score !== 0) {
             const newUserLike = await UserLike.create({
                 PageId: pageId,
                 PageType: pageType,
@@ -172,7 +190,7 @@ export async function getUserlikes(pageId, pageType, userId) {
 
 export const getLikeByPage = async (req, res) => {
     try {
-        const { pageId , pageType } = req.body;
+        const { pageId , pageType } = req.params;
         const decodedUser = res.locals.decodedUser
         const likes = await getPageLikes(pageId, pageType);
 

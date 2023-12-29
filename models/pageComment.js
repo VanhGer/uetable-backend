@@ -1,5 +1,6 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
+import Comment from "./comment.js";
 const PageComment = sequelize.define("PageComment", {
     Id: {
       type: DataTypes.INTEGER,
@@ -35,6 +36,11 @@ const PageComment = sequelize.define("PageComment", {
 
  }, {
     timestamps: false
+ });
+
+ Comment.hasMany(PageComment);
+ PageComment.belongsTo(Comment, {
+     foreignKey: 'CommentId'
  });
 
  export default PageComment;
