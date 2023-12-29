@@ -80,6 +80,7 @@ export const getDocumentById = async (req, res) => {
                 tmp.category = doc.Category;
                 tmp.link = doc.Link;
                 tmp.userId = user.Id;
+                tmp.studentId= user.StudentId;
                 tmp.userName = user.Name;
                 tmp.subject = subject.Name;
                 tmp.subjectId = subject.Id;

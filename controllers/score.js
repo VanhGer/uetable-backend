@@ -26,7 +26,8 @@ export async function semesterInfoById(userId, id) {
         result.semesterGPA4 = 0.0;
         result.totalMark10 = 0.0;
         result.cnt = 0.0;
-        result.totalMark4 = 0.0
+        result.totalMark4 = 0.0;
+        result.yearGPA = 0.0;
         let data = await UserScore.findAll({
             raw: true,
             where: {
@@ -66,6 +67,7 @@ export async function semesterInfoById(userId, id) {
         result.semesterGPA4 = result.totalMark4 / result.sumOfCredits;
         result.cnt = result.sumOfCredits;
         result.sumOfCredits += tmp;
+        result.yearGPA = await calYearGPA(userId, id);
         return result;
 
     } catch (err) {
@@ -250,7 +252,7 @@ async function calTempAllGPA(listOfSubjects, userId, semId) {
 }
 
 /** Get GPA in a year */
-async function calYearGPA(studentId, semId) {
+async function calYearGPA(Id, semId) {
     try {
         let allSem = [];
         if (semId % 3 == 1) {
@@ -264,7 +266,7 @@ async function calYearGPA(studentId, semId) {
         let totalScore = await UserScore.findAll({
             raw: true,
             where: {
-                UserId: studentId,
+                UserId: Id,
                 SemesterId: {
                     [Op.in]: allSem
                 }
