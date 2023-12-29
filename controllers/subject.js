@@ -19,11 +19,11 @@ export const getSubjectByName = async (req, res) => {
                     [Op.like]: `%${str}%`
                 }
             }
-        }) 
+        })
         res.status(200).json(subjectList);
     } catch (err) {
         res.status(500).json(err.message);
-    } 
+    }
 }
 
 export const getSubjectByCode = async (req, res) => {
@@ -35,12 +35,13 @@ export const getSubjectByCode = async (req, res) => {
                 Code: {
                     [Op.like]: `%${str}%`
                 }
-            }
-        }) 
+            },
+            limit: typeof(req.query.limit) === 'undefined' ? req.query.limit : +req.query.limit
+        })
         res.status(200).json(subjectList);
     } catch (err) {
         res.status(500).json(err.message);
-    } 
+    }
 }
 
 export const getSubjectInfo = async (req, res) => {
@@ -63,7 +64,7 @@ export const getSubjectInfo = async (req, res) => {
             }
         });
         let score = 0, type = "registered"
-        if (userScore == null) {score = {'final': null}; type = "haven't registered"}
+        if (userScore == null) {score = {'final': null}; type = "all"}
         else {
             let sc = await Score.findOne({
                 where: {
@@ -153,7 +154,7 @@ export const getSubjectHaveNotLearn = async (req, res) => {
             courses.push(c["Subject.Code"]);
         }
         let result = await Subject.findAll({
-            raw: true, 
+            raw: true,
             where: {
                 Code: {
                     [Op.notIn]: courses
@@ -161,7 +162,7 @@ export const getSubjectHaveNotLearn = async (req, res) => {
             },
             attributes: ['Name', 'Code', 'Credit']
         })
-        
+
         res.status(200).json(result);
     } catch (err) {
         res.status(500).json(err.message)
@@ -173,7 +174,7 @@ async function saveSubjectAccessTime(subjectId, userId) {
         let theLast = await AccessSubject.findOne({
             where: {
                 SubjectId: subjectId,
-                UserId: userId, 
+                UserId: userId,
             }
         });
         if (theLast === null) {
@@ -189,7 +190,7 @@ async function saveSubjectAccessTime(subjectId, userId) {
     } catch(err) {
         throw err;
     }
-    
+
 }
 
 async function getLastAccessTime(subjectId, userId) {
@@ -197,7 +198,7 @@ async function getLastAccessTime(subjectId, userId) {
         let theLast = await AccessSubject.findOne({
             where: {
                 SubjectId: subjectId,
-                UserId: userId, 
+                UserId: userId,
             }
         });
         if (theLast === null) {
@@ -250,16 +251,27 @@ export const getPartSubject = async (req, res) => {
         let newSubj;
         if (req.body.sortBy == "stared") {
             newSubj = subjectList.sort((a, b) => b.star - a.star);
-            
+
         } else if (req.body.sortBy == "rating"){
             newSubj = subjectList.sort((a, b) => b.likes - a.likes);
         } else {
             newSubj = subjectList.sort((a, b) => b.getLastAccessTime - a.getLastAccessTime);
             // console.log(newSubj);
         }
-
+        let st = parseInt(req.body.from);
+        let end = parseInt(req.body.to);
         let result = [];
-        for (let c of newSubj) {
+        if (newSubj.length < end) {
+            end = newSubj.length;
+        }
+        if (st >= newSubj.length) {
+            res.status(404).json("Cannot find subjects in that range");
+            return;
+        }
+
+        for (let i = st-1; i < end; i++) {
+            let c = newSubj[i];
+            console.log(newSubj[i]);
             let tmp = {};
             let userScore = await UserScore.findOne({
                 raw: true,
@@ -269,7 +281,7 @@ export const getPartSubject = async (req, res) => {
                 }
             });
             let score = 0;
-            if (userScore == null) {score = "haven't studied";}
+            if (userScore == null) {score = {};}
             else {
                 let sc = await Score.findOne({
                     where: {
@@ -285,13 +297,13 @@ export const getPartSubject = async (req, res) => {
             tmp.type = "all";
             tmp.score = score;
             tmp.like = c.likes;
-            tmp.stared = c.star;
+            tmp.stared = c.star === 1;
             tmp.documents = await getNumberDocument(c.Id);
             // tmp.letterGrade = await getFinalScore(c.Id, user.Id);
             result.push(tmp);
         }
-        res.status(200).json(result); 
-        
+        res.status(200).json(result);
+
 
     } catch (err) {
         res.status(500).json(res);

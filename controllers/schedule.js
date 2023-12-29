@@ -91,6 +91,98 @@ export const getScheduleInWeek = async (req, res) => {
     }
 }
 
+export const getSubjectInWeek = async (req, res) => {
+    try {
+        const today = new Date();
+        const firstDayOfWeek = new Date(
+            today.setDate(today.getDate() - today.getDay()),
+        );
+
+        const lastDayOfWeek = new Date(
+            today.setDate(today.getDate() - today.getDay() + 7),
+        );
+        // console.log('First day of the week:', firstDayOfWeek);
+        // console.log('Last day of the week:', lastDayOfWeek);
+
+        const user = res.locals.decodedUser;
+        const sche = await Schedule.findOne({
+            where: {
+                UserId: user.Id
+            }
+        });
+        let scheId = sche.Id;
+        const eventList = await Event.findAll({
+            raw: true,
+            where: {
+                ScheduleId: scheId,
+                [Op.or]: [
+                    {
+                        day: {
+                            [Op.between]: [firstDayOfWeek, lastDayOfWeek]
+                        }
+                        
+                    }, 
+                    {
+                        day: null
+                    }
+                ]
+            },
+            include: {
+                model: Class,
+                include: {
+                    model: Subject,
+                }
+            },
+            attributes: [
+                'name', 'timeStart', 'timeEnd', 'day', 'location', 'info', 'color',
+                // [sequelize.col('Classes.Code'), 'classCode'],
+                [sequelize.col('Classes.Subject.Id'), 'id'],
+                [sequelize.col('Classes.Teacher'), 'teacher'],
+                [sequelize.col('Classes.number'), 'number'],
+                [sequelize.col('Classes.group'), 'group'],
+                [sequelize.col('Classes.weekday'), 'weekday'],
+                [sequelize.col('Classes.lessonStart'), 'lessonStart'],
+                [sequelize.col('Classes.lessonEnd'), 'lessonEnd'],
+                [sequelize.col('Classes.Subject.Credit'), 'credits'],
+                [sequelize.col('Classes.Subject.Code'), 'code']
+            ]
+        });
+        //console.log(eventList);
+        //res.status(200).json(eventList);
+        let result = [];
+        if (eventList === null) {
+            res.status(200).json(result);
+            return;
+        }
+        for (let c of eventList) {
+            let tmp = {};
+            tmp.id = c.id;
+            tmp.code = c.code;
+            tmp.lessonStart = c.lessonStart;
+            tmp.lessonEnd = c.lessonEnd;
+            tmp.group = c.group;
+            tmp.name = c.name;
+            tmp.place = c.location;
+            tmp.credits = c.credits;
+            tmp.teacherName = c.teacher;
+            tmp.weekDay = c.weekday;
+            tmp.numberOfStudents = c.number;
+            tmp.highlightColor = c.color;
+            tmp.description = c.info;
+
+            result.push(tmp);
+        }
+        // const eventListRes = eventList.map(({id, code, name, timeStart, timeEnd, day, location, info, color,
+        //      teacher, number, group, weekday, lessonStart, lessonEnd, credits}) => ({ id, code, name, 
+        //     timeStart, timeEnd, day, location, info, color,  teacher, number, group, 
+        //     weekday, lessonStart, lessonEnd, credits }));
+
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+}
+
 function trimClass(str) {
     let tmp = str.replace(" (CLC)", "");
     let words = tmp.split(" ");
