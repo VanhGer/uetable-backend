@@ -4,6 +4,7 @@ import {
     getCommentId,
     modifyComment,
     deleteComment,
+    getChildrenComment,
     getVersionByComment,
 } from '../controllers/comment.js'
 import { auth } from '../middlewares/auth.js'
@@ -15,6 +16,9 @@ router
   .put(auth, modifyComment)
   .delete(auth, deleteComment)
 
+router
+  .route('/api/comment/getchildren/:commentid')
+  .get(auth, getChildrenComment)
 router.route('/api/comment/:commentid').get(auth, getCommentId)
 
 router
