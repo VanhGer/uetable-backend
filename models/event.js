@@ -37,7 +37,7 @@ const Event= sequelize.define("Event", {
     },
     color: {
         type: DataTypes.STRING,
-        defaultValue: "#ff0000"
+        defaultValue: "#ffffff00"
     },
 
     ScheduleId: {
