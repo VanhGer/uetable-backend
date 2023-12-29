@@ -136,7 +136,7 @@ export const getSubjectInWeek = async (req, res) => {
             attributes: [
                 'name', 'timeStart', 'timeEnd', 'day', 'location', 'info', 'color',
                 // [sequelize.col('Classes.Code'), 'classCode'],
-                [sequelize.col('Classes.Id'), 'id'],
+                [sequelize.col('Classes.Subject.Id'), 'id'],
                 [sequelize.col('Classes.Teacher'), 'teacher'],
                 [sequelize.col('Classes.number'), 'number'],
                 [sequelize.col('Classes.group'), 'group'],
