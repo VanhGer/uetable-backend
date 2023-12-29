@@ -43,7 +43,7 @@ export const createDocument = async (req, res) => {
     } catch (err) {
         res.status(500).json(err.message);
     }
-}; 
+};
 
 export const getDocumentById = async (req, res) => {
     try {
@@ -52,7 +52,7 @@ export const getDocumentById = async (req, res) => {
             where: {
                 Id: docId
             }
-        }) 
+        })
         if (doc === null) {
             res.status(404).json("Not found document");
         } else {
@@ -86,17 +86,24 @@ export const getDocumentById = async (req, res) => {
                 tmp.subjectId = subject.Id;
                 res.status(200).json(tmp);
             }
-            
+
         }
     } catch (err) {
         res.status(500).json(err.message);
     }
-}  
+}
 
 export const getDocumentOfSubject = async (req, res) => {
     try {
         let subjectId = req.query.subjectId;
-        let documentList = await Document.findAll({
+        let documentList = req.query.limit ? await Document.findAll({
+            raw: true,
+            where: {
+                SubjectId: subjectId
+            },
+            order: [['Download', 'DESC']],
+            limit: +req.query.limit
+        }) : await Document.findAll({
             raw: true,
             where: {
                 SubjectId: subjectId
@@ -119,16 +126,17 @@ export const getDocumentOfSubject = async (req, res) => {
             tmp.category = c.Category;
             tmp.link = c.Link;
             tmp.userName = user.Name;
-            
+
             result.push(tmp);
         }
         res.status(200).json(result);
     } catch(err) {
+        console.log(err)
         res.status(500).json(err);
     }
-    
-    
-    
+
+
+
 }
 
 export const getMyDocumentByStudentId = async(req, res) => {
@@ -148,7 +156,7 @@ export const getMyDocumentByStudentId = async(req, res) => {
             raw: true,
             where: {
                 UserId: user.Id
-            }, 
+            },
             include: [Subject]
         });
         let result = [];
