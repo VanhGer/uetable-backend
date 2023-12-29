@@ -257,9 +257,20 @@ export const getPartSubject = async (req, res) => {
             newSubj = subjectList.sort((a, b) => b.getLastAccessTime - a.getLastAccessTime);
             // console.log(newSubj);
         }
-
+        let st = parseInt(req.body.from);
+        let end = parseInt(req.body.to);
         let result = [];
-        for (let c of newSubj) {
+        if (newSubj.length < end) {
+            end = newSubj.length;
+        }
+        if (st >= newSubj.length) {
+            res.status(404).json("Cannot find subjects in that range");
+            return;
+        }
+
+        for (let i = st-1; i < end; i++) {
+            let c = newSubj[i];
+            console.log(newSubj[i]);
             let tmp = {};
             let userScore = await UserScore.findOne({
                 raw: true,
