@@ -53,8 +53,8 @@ export async function semesterInfoById(userId, id) {
             sco.final4 = c["Score.total4"];
             subj.score = sco;
             result.subjects.push(subj);
-            if (subj.code.startsWith("PES") == false) { 
-                
+            if (subj.code.startsWith("PES") == false) {
+
                 result.sumOfCredits += subj.credits;
                 result.totalMark10 += sco.final * subj.credits;
                 result.totalMark4 += sco.final4 * subj.credits;
@@ -71,19 +71,19 @@ export async function semesterInfoById(userId, id) {
     } catch (err) {
         return err.message;
     }
-    
+
 }
 
 export const getSemesterInfoById = async(req, res) => {
     try {
         const user = res.locals.decodedUser;
         let {params} = req;
-        // let userScores = await 
+        // let userScores = await
         let result = await semesterInfoById(user.Id, params.semesterId);
         delete result.cnt;
         delete result.totalMark10;
         res.status(200).json(result);
-        
+
     } catch (err) {
         res.status(500).json(err.message);
     }
@@ -101,7 +101,7 @@ export const getAllSemesterInfo = async(req, res) => {
         result.credits = 0;
         // result.totalGPA4 = 0.0;
         result.semesterInfo = [];
-        
+
         result.cnt = 0;
         for (let c of semId) {
 
@@ -146,7 +146,7 @@ export const updateSemesterCourseList = async(req, res) => {
         for (let c of subjects) {
             let cCode = c.code;
             let cInfo = await Subject.findOne({
-                raw: true, 
+                raw: true,
                 where: {
                     Code: cCode
                 }
@@ -155,8 +155,8 @@ export const updateSemesterCourseList = async(req, res) => {
                 subjectInfo.push(cInfo);
             }
         }
-       
-        let subIds = subjectInfo.map(c => c.Id); 
+
+        let subIds = subjectInfo.map(c => c.Id);
         // console.log(subjects);
         // console.log(subjectInfo);
         // console.log(subIds);
@@ -167,14 +167,14 @@ export const updateSemesterCourseList = async(req, res) => {
                     [Op.in]: subIds,
                 },
                 SemesterId: semId
-            }, 
+            },
         });
 
         /// delete old scores
         for (let c of userScores) {
             await c.destroy();
         }
-        
+
         /// Add new scores to database
         for (let i = 0; i < subjects.length; i++) {
             let registeredSubject = subjects[i];
@@ -186,7 +186,7 @@ export const updateSemesterCourseList = async(req, res) => {
                 finalExamWeight: registeredSubject.score.finalTerm.weight,
                 total10: registeredSubject.score.final
             });
-            await newScore.save(); 
+            await newScore.save();
 
             let scoreId = newScore.Id;
             const newUserScore = await UserScore.create({
@@ -199,8 +199,8 @@ export const updateSemesterCourseList = async(req, res) => {
 
         }
 
-        let newGPA = calGPA(subjects);
-        res.status(200).json(`updated successfully, new GPA is: ${newGPA}`);
+        // let newGPA = calGPA(subjects);
+        res.status(200).json({ok: true});
     } catch(err) {
         res.status(500).json(err.message);
     }
@@ -260,13 +260,13 @@ async function calYearGPA(studentId, semId) {
         } else {
             allSem.push(semId - 1); allSem.push(semId); allSem.push(semId + 1);
         }
-        
+
         let totalScore = await UserScore.findAll({
             raw: true,
             where: {
                 UserId: studentId,
                 SemesterId: {
-                    [Op.in]: allSem 
+                    [Op.in]: allSem
                 }
             },
             include: [Score, Subject],
@@ -281,7 +281,7 @@ async function calYearGPA(studentId, semId) {
         }
         if (cres == 0) return 0;
         return (total10 / cres);
-        
+
 
     } catch(err) {
         throw err;
@@ -295,17 +295,17 @@ async function calTempYearGPA(listOfSubjects, userId, semId) {
         if (semId % 3 == 1) {
             allSem.push(semId + 1); allSem.push(semId + 2);
         } else if (semId % 3 == 0) {
-            allSem.push(semId - 2); allSem.push(semId - 1); 
+            allSem.push(semId - 2); allSem.push(semId - 1);
         } else {
             allSem.push(semId - 1); allSem.push(semId + 1);
         }
-        
+
         let totalScore = await UserScore.findAll({
             raw: true,
             where: {
                 UserId: userId,
                 SemesterId: {
-                    [Op.in]: allSem 
+                    [Op.in]: allSem
                 }
             },
             include: [Score, Subject],
@@ -329,7 +329,7 @@ async function calTempYearGPA(listOfSubjects, userId, semId) {
         // console.log(total10 / cres);
         if (cres == 0) return 0;
         return (total10 / cres);
-        
+
 
     } catch(err) {
         throw err;
@@ -337,7 +337,7 @@ async function calTempYearGPA(listOfSubjects, userId, semId) {
 }
 
 /** Get temporary GPA */
-export const getTempGPA = async (req, res) => { 
+export const getTempGPA = async (req, res) => {
     try {
         const user = res.locals.decodedUser;
         let semId = req.body.id;
