@@ -157,6 +157,29 @@ export const deleteComment = async (req, res) => {
     }
 }
 
+export const getChildrenComment = async (req, res) => {
+    try {
+        const commentId = req.params.commentid;
+        const decodedUser = res.locals.decodedUser
+        const comments = await Comment.findAll({
+            where: {
+                ParentId: commentId
+            }
+        });
+        // console.log(comments)
+        const commentDTOs = await Promise.all(comments.map( async (comment) => {
+            // console.log(comment)
+            // const commentModel = await Comment.findByPk(comment.CommentId)
+            const commentDTO = await CommentDTO.convertToDto(comment, decodedUser.Id);
+            return commentDTO;
+        }));
+        // const commentDTO = await CommentDTO.convertToDto(comment, decodedUser.Id);
+        res.status(200).send(commentDTOs);
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
 export const getVersionByComment = async (req, res) => {
     try {
         const { commentId } = req.body;
