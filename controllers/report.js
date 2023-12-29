@@ -5,7 +5,7 @@ import User from "../models/user.js";
 
 
 export const createReport = async (req, res) => {
-    try {
+    // try {
         const { content, pageType, pageId, type} = req.body;
         const decodedUser = res.locals.decodedUser
         const report = await Report.create({
@@ -15,6 +15,7 @@ export const createReport = async (req, res) => {
         });
 
         await report.save();
+        // console.log(report)
 
         const pageReport = await PageReport.create({
             ReportId: report.Id,
@@ -28,9 +29,9 @@ export const createReport = async (req, res) => {
             message: 'Report successfully created',
             ReportId: report.Id,
         })
-    } catch (err) {
-        res.status(500).json(err.message);
-    }
+    // } catch (err) {
+    //     res.status(500).json(err.message);
+    // }
 };
 
 export const getReportId = async (req, res) => {
