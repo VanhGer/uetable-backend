@@ -248,16 +248,16 @@ export const getPartSubject = async (req, res) => {
             c.lastAccess = await getLastAccessTime(c.Id, user.Id);
         }
 
-        let newSubj;
-        if (req.body.sortBy == "stared") {
-            newSubj = subjectList.sort((a, b) => b.star - a.star);
+        let newSubj = subjectList;
+        // if (req.body.sortBy == "stared") {
+        //     newSubj = subjectList.sort((a, b) => b.star - a.star);
 
-        } else if (req.body.sortBy == "rating"){
-            newSubj = subjectList.sort((a, b) => b.likes - a.likes);
-        } else {
-            newSubj = subjectList.sort((a, b) => b.getLastAccessTime - a.getLastAccessTime);
-            // console.log(newSubj);
-        }
+        // } else if (req.body.sortBy == "rating"){
+        //     newSubj = subjectList.sort((a, b) => b.likes - a.likes);
+        // } else {
+        //     newSubj = subjectList.sort((a, b) => b.getLastAccessTime - a.getLastAccessTime);
+        //     // console.log(newSubj);
+        // }
         let st = parseInt(req.body.from);
         let end = parseInt(req.body.to);
         let result = [];
@@ -271,31 +271,31 @@ export const getPartSubject = async (req, res) => {
 
         for (let i = st-1; i < end; i++) {
             let c = newSubj[i];
-            console.log(newSubj[i]);
+            // console.log(newSubj[i]);
             let tmp = {};
-            let userScore = await UserScore.findOne({
-                raw: true,
-                where: {
-                    SubjectId: c.Id,
-                    UserId: user.Id
-                }
-            });
-            let score = 0;
-            if (userScore == null) {score = {};}
-            else {
-                let sc = await Score.findOne({
-                    where: {
-                        Id: userScore.ScoreId
-                    }
-                });
-                score = {'final': sc.total10};
-            }
+            // let userScore = await UserScore.findOne({
+            //     raw: true,
+            //     where: {
+            //         SubjectId: c.Id,
+            //         UserId: user.Id
+            //     }
+            // });
+            // let score = 0;
+            // if (userScore == null) {score = {};}
+            // else {
+            //     let sc = await Score.findOne({
+            //         where: {
+            //             Id: userScore.ScoreId
+            //         }
+            //     });
+            //     score = {'final': sc.total10};
+            // }
             tmp.code = c.Code;
             tmp.id = c.Id;
             tmp.name = c.Name;
             tmp.credits = c.Credit;
             tmp.type = "all";
-            tmp.score = score;
+            // tmp.score = score;
             tmp.like = c.likes;
             tmp.stared = c.star === 1;
             tmp.documents = await getNumberDocument(c.Id);
