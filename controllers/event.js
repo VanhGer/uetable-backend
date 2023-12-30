@@ -1,6 +1,6 @@
 import Event from "../models/event.js";
 import Schedule from "../models/Schedule.js";
-
+import {hhmmss, yyyymmdd} from '../utils/date.js'
 
 
 export const createEvent = async (req, res) => {
@@ -11,11 +11,11 @@ export const createEvent = async (req, res) => {
                 UserId: user.Id
             }
         });
-        let start = req.body.timeStart;
-        let end = req.body.timeEnd;
-        let stime = start.substring(11, 19);
-        let etime = end.substring(11, 19);
-        let day = start.substring(0, 10);
+        let start = new Date(req.body.timeStart);
+        let end = new Date(req.body.timeEnd);
+        let stime = hhmmss(start);
+        let etime = hhmmss(end);
+        let day = yyyymmdd(start);
         // console.log(end.substring(11, 19));
 
         const newEvent = await Event.create({
@@ -59,7 +59,7 @@ export const deleteEventById = async (req, res) => {
             await curEvent.destroy();
             res.status(200).json("Delete successfully")
         }
- 
+
 
     } catch (err) {
         res.status(500).json(err.message);
@@ -85,11 +85,11 @@ export const updateEventById = async (req, res) => {
             res.status(403).json("Do not have permission!")
         } else{
             let etime, stime, day;
-            let start = req.body.timeStart;
-            let end = req.body.timeEnd;
-            if (start !== null) {day = start.substring(0, 10); stime = start.substring(11, 19);}
-            if (end !== null) etime = end.substring(11, 19);
-            
+            let start = new Date(req.body.timeStart);
+            let end = new Date(req.body.timeEnd);
+            if (start !== null) {day = yyyymmdd(start); stime = hhmmss(start);}
+            if (end !== null) etime = hhmmss(end);
+
             curEvent.set({
                 Name: (! req.body.name) ? curEvent.Name : req.body.name,
                 TimeStart: (! stime) ? curEvent.TimeStart : stime,
@@ -97,11 +97,12 @@ export const updateEventById = async (req, res) => {
                 Location: (! req.body.location) ? curEvent.Location : req.body.location,
                 Info: (! req.body.info) ? curEvent.Info : req.body.info,
                 day: (! day) ? curEvent.day : day,
+                color: (! req.body.color) ? curEvent.color : req.body.color,
             });
             await curEvent.save();
             res.status(200).json("Update successfully")
         }
- 
+
 
     } catch (err) {
         res.status(500).json(err.message);

@@ -7,6 +7,8 @@ import Subject from "../models/subject.js";
 import { Op } from "sequelize";
 import { getCoursebyStudentId } from "../middlewares/crawlCourse.js";
 import { START_CUR_TERM_DAY, END_CUR_TERM_DAY, CUR_TERM_ID } from "../constant.js";
+import {getRandColor} from '../utils/getRandColor.js'
+import {getDate} from '../utils/date.js'
 
 export const getScheduleInWeek = async (req, res) => {
     try {
@@ -37,8 +39,8 @@ export const getScheduleInWeek = async (req, res) => {
                         day: {
                             [Op.between]: [firstDayOfWeek, lastDayOfWeek]
                         }
-                        
-                    }, 
+
+                    },
                     {
                         day: null
                     }
@@ -69,20 +71,20 @@ export const getScheduleInWeek = async (req, res) => {
             let tmp = {};
             tmp.eventId = c.id;
             tmp.name = c.name;
-            let cur_start = `${c.day}T${c.timeStart}`;
-            tmp.timeStart = new Date(cur_start);
-            tmp.timeStart.setHours(tmp.timeStart.getHours() + 7);
-            let cur_end = `${c.day}T${c.timeEnd}`;
-            tmp.timeEnd = new Date(cur_end);
-            tmp.timeEnd.setHours(tmp.timeEnd.getHours() + 7);
+            // let cur_start = `${c.day}T${c.timeStart}`;
+            tmp.timeStart = getDate(c.timeStart, c.day);
+            // tmp.timeStart.setHours(tmp.timeStart.getHours() + 7);
+            // let cur_end = `${c.day}T${c.timeEnd}`;
+            tmp.timeEnd = getDate(c.timeEnd, c.day);
+            // tmp.timeEnd.setHours(tmp.timeEnd.getHours() + 7);
             tmp.color = c.color;
             tmp.location = c.location;
             tmp.info = c.info;
             result.push(tmp);
         }
         // const eventListRes = eventList.map(({id, name, timeStart, timeEnd, day, location, info, color,
-        //     classCode, teacher, number, group, weekday, lessonStart, lessonEnd, creadit}) => ({ id, name, 
-        //     timeStart, timeEnd, day, location, info, color, classCode, teacher, number, group, 
+        //     classCode, teacher, number, group, weekday, lessonStart, lessonEnd, creadit}) => ({ id, name,
+        //     timeStart, timeEnd, day, location, info, color, classCode, teacher, number, group,
         //     weekday, lessonStart, lessonEnd, creadit }));
 
         res.status(200).json(result);
@@ -120,8 +122,8 @@ export const getSubjectInWeek = async (req, res) => {
                         day: {
                             [Op.between]: [firstDayOfWeek, lastDayOfWeek]
                         }
-                        
-                    }, 
+
+                    },
                     {
                         day: null
                     }
@@ -155,6 +157,8 @@ export const getSubjectInWeek = async (req, res) => {
             return;
         }
         for (let c of eventList) {
+            if (c.id === null)
+                continue;
             let tmp = {};
             tmp.id = c.id;
             tmp.code = c.code;
@@ -173,8 +177,8 @@ export const getSubjectInWeek = async (req, res) => {
             result.push(tmp);
         }
         // const eventListRes = eventList.map(({id, code, name, timeStart, timeEnd, day, location, info, color,
-        //      teacher, number, group, weekday, lessonStart, lessonEnd, credits}) => ({ id, code, name, 
-        //     timeStart, timeEnd, day, location, info, color,  teacher, number, group, 
+        //      teacher, number, group, weekday, lessonStart, lessonEnd, credits}) => ({ id, code, name,
+        //     timeStart, timeEnd, day, location, info, color,  teacher, number, group,
         //     weekday, lessonStart, lessonEnd, credits }));
 
         res.status(200).json(result);
@@ -235,12 +239,12 @@ export const autoCreateEventClass = async (req, res) => {
             const cur = await Class.findAll({
                 raw: true,
                 where: {
-                    Code: classCode, 
+                    Code: classCode,
                     [Op.or]: [
                         {
                             group: "CL"
-                            
-                        }, 
+
+                        },
                         {
                             group: classList[i].group
                         }
@@ -252,7 +256,7 @@ export const autoCreateEventClass = async (req, res) => {
             }
         }
         for (let cla of classInfo) {
-            let wD = (cla.weekDay - 1) % 7; 
+            let wD = (cla.weekDay - 1) % 7;
             let days = getDays(new Date(START_CUR_TERM_DAY), new Date(END_CUR_TERM_DAY), wD);
             for (let dayy of days) {
                 const newEvent = await Event.create({
@@ -263,6 +267,7 @@ export const autoCreateEventClass = async (req, res) => {
                     Info: cla.Teacher,
                     day: dayy,
                     ScheduleId: sche.Id,
+                    color: getRandColor()
                 });
                 await newEvent.save();
                 let newEventId = newEvent.Id;
@@ -273,11 +278,11 @@ export const autoCreateEventClass = async (req, res) => {
                 await newClassEvent.save();
 
             }
-            
+
             console.log(cla);
         }
 
-       
+
         res.status(200).json("create successfully");
     } catch (err) {
         res.status(500).json(err.message);

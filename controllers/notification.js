@@ -54,22 +54,36 @@ export const getNotification = async (req, res) => {
 export const seenNotification = async (req, res) => {
     try {
         const user = res.locals.decodedUser;
-        const notiId = req.body.notiId;
-        let noti = await Notification.findOne({
-            where: {
-                UserId: user.Id,
-                Id: notiId
+        if (req.body.seenType === 'single') {
+            const notiId = req.body.notiId;
+            let noti = await Notification.findOne({
+                where: {
+                    UserId: user.Id,
+                    Id: notiId
+                }
+            });
+            if (noti === null) {
+                res.status(404).json("Notification not found");
+                return;
             }
-        });
-        if (noti === null) {
-            res.status(404).json("Notification not found");
-            return;
+            await noti.update({
+                Seen: true
+            });
+            await noti.save();
+            res.status(200).json("Seen successfully");
+        } else if (req.body.seenType === 'all') {
+            try {
+                await Notification.update(
+                    { Seen: true },
+                    { where: { UserId: user.Id, Seen: false } }
+                  );
+            } catch (error) {
+                res.status(500).json(error)
+            }
+        } else {
+
+            res.status(400).json('seenType is invalid')
         }
-        await noti.update({
-            Seen: true
-        });
-        await noti.save();
-        res.status(200).json("Seen successfully");
     } catch (err) {
         res.status(500).json(err);
     }

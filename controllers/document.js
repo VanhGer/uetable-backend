@@ -126,6 +126,7 @@ export const getDocumentOfSubject = async (req, res) => {
             tmp.category = c.Category;
             tmp.link = c.Link;
             tmp.userName = user.Name;
+            tmp.studentId = user.StudentId;
 
             result.push(tmp);
         }
