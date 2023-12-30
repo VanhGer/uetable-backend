@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import sequelize from "../database/db.js";
 import Class from "../models/class.js";
 import UserScore from "../models/userScore.js";
+import QueryTypes from "sequelize";
 import SubjectLike from "../models/subjectLike.js";
 import Document from "../models/document.js";
 import { getPageLikes, getPageDislikes, getUserlikes } from "./page.js";
@@ -10,6 +11,7 @@ import AccessSubject from "../models/accessSubject.js"
 import Score from "../models/score.js";
 import Page from "../models/page.js";
 import UserLike from "../models/userLike.js";
+import { getDocumentById } from "./document.js";
 
 export const getSubjectByName = async (req, res) => {
     try {
@@ -229,119 +231,46 @@ async function getNumberDocument(subjectId) {
 export const getPartSubject = async (req, res) => {
     try {
         let str = req.body.searchValue;
+        let sb = req.body.sortBy;
         const user = res.locals.decodedUser;
         let st = parseInt(req.body.from);
         let end = parseInt(req.body.to);
-        let result = [];
-        if (req.body.sortBy == "last-access") {
-            let subjectList = await Subject.findAll({
-                raw: true,
-                where: {
-                    Name: {
-                        [Op.like]: `%${str}%`
-                    }
-                },
-                include: [
-                  {
-                    model: AccessSubject,
-                    required: false,
-                    where: {
-                      UserId: user.Id
-                    },
-                    order: [['LastAccess', 'DESC']]
-                  },
-                  {
-                    model: Page,
-                    include: {
-                        model: UserLike,
-
-                    }
-                  }
-                ],
-                offset: st - 1,
-                limit: end - st + 1
-            });
-            res.status(200).json(subjectList);
-            // let result = [];
-            // if (subjectList.length < end) {
-            //     end = subjectList.length;
-            // }
-            // if (st >= subjectList.length) {
-            //     res.status(404).json("Cannot find subjects in that range");
-            //     return;
-            // }
+        let orderBy = "AccessSubjects.LastAccess DESC";
+        if (sb === 'stared') {
+            orderBy = "stared DESC";
+        } else if (sb === 'rating') {
+            orderBy = "'like' DESC";
         }
+        
+       
+        const subjectList = await sequelize.query(`SELECT
+            Subjects.Id AS id,
+            Subjects.Name AS name,
+            Code AS code,
+            Credit AS credits,
+            AccessSubjects.LastAccess as getLastAccessTime,
+            COUNT(DISTINCT Documents.Id) AS documents,
+            COUNT(DISTINCT UserLikes.Id) AS 'like',
+            MAX(CASE WHEN UserLikes.UserId = ${user.Id} THEN 1 ELSE 0 END) AS stared
+        FROM
+            Subjects
+        LEFT JOIN AccessSubjects ON Subjects.Id = AccessSubjects.SubjectId AND AccessSubjects.UserId = ${user.Id}
+        LEFT JOIN Documents ON Documents.SubjectId = Subjects.Id
+        LEFT JOIN UserLikes ON UserLikes.PageId = Subjects.Id
+        WHERE
+            Subjects.Name LIKE '%${str}%'
+        GROUP BY
+            Subjects.Id, Name, Code, Credit, AccessSubjects.LastAccess
+        ORDER BY
+            ${orderBy}
+        LIMIT
+            ${st - 1}, ${end - st + 1};`,  {  model: Subject });
+    
 
-        // console.log(subjectList);
-        // for (let c of subjectList) {
-        //     // let curStar = await getUserlikes(c.Id, 'S', user.Id);
-        //     // if (curStar === null) {
-        //     //     c.star = 0;
-        //     // } else {
-        //     //     c.star = 1;
-        //     // }
-
-        //     // c.likes = await getPageLikes(c.Id, 'S');
-        //     // c.lastAccess = await getLastAccessTime(c.Id, user.Id);
-        //     console.log(c);
-        // }
-
-        // let newSubj = subjectList;
-        // if (req.body.sortBy == "stared") {
-        //     newSubj = subjectList.sort((a, b) => b.star - a.star);
-
-        // } else if (req.body.sortBy == "rating"){
-        //     newSubj = subjectList.sort((a, b) => b.likes - a.likes);
-        // } else {
-        //     newSubj = subjectList.sort((a, b) => b.getLastAccessTime - a.getLastAccessTime);
-        //     // console.log(newSubj);
-        // }
-
-        // let result = [];
-        // if (newSubj.length < end) {
-        //     end = newSubj.length;
-        // }
-        // if (st >= newSubj.length) {
-        //     res.status(404).json("Cannot find subjects in that range");
-        //     return;
-        // }
-
-        // for (let i = st-1; i < end; i++) {
-        //     let c = newSubj[i];
-            // console.log(newSubj[i]);
-            // let tmp = {};
-            // let userScore = await UserScore.findOne({
-            //     raw: true,
-            //     where: {
-            //         SubjectId: c.Id,
-            //         UserId: user.Id
-            //     }
-            // });
-            // let score = 0;
-            // if (userScore == null) {score = {};}
-            // else {
-            //     let sc = await Score.findOne({
-            //         where: {
-            //             Id: userScore.ScoreId
-            //         }
-            //     });
-            //     score = {'final': sc.total10};
-            // }
-            // tmp.code = c.Code;
-            // tmp.id = c.Id;
-            // tmp.name = c.Name;
-            // tmp.credits = c.Credit;
-            // tmp.type = "all";
-            // tmp.score = score;
-            // tmp.like = c.likes;
-            // tmp.stared = c.star === 1;
-            // tmp.documents = await getNumberDocument(c.Id);
-            // tmp.letterGrade = await getFinalScore(c.Id, user.Id);
-            // result.push(tmp);
-        // }
-        // res.status(200).json(result);
-        // res.status(200).json("ok");
-
+    console.log(await getPageLikes(1, 'S'));
+    console.log(await getNumberDocument(1))
+    res.status(200).json(subjectList);
+    
     } catch (err) {
         res.status(500).json(err);
     }
