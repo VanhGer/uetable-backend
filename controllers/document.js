@@ -172,6 +172,7 @@ export const getMyDocumentByStudentId = async(req, res) => {
             tmp.category = c.Category;
             tmp.link = c.Link;
             tmp.subjectName = c["Subject.Name"];
+            tmp.subjectId = c["Subject.Id"];
 
             result.push(tmp);
         }
@@ -179,4 +180,8 @@ export const getMyDocumentByStudentId = async(req, res) => {
     } catch(err) {
         res.status(500).json(err);
     }
+}
+
+export async function dumpUpload(req, res) {
+    res.status(200).json({ok: true})
 }
