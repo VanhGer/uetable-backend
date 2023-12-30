@@ -15,13 +15,13 @@ import AdminRouter from './routes/admin.js';
 import NotificationRouter from './routes/notification.js'
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import AdminJS from 'adminjs'
-import AdminJSExpress from '@adminjs/express';
-import { Database, Resource } from '@adminjs/sequelize'
+// import AdminJS from 'adminjs'
+// import AdminJSExpress from '@adminjs/express';
+// import { Database, Resource } from '@adminjs/sequelize'
 import User from './models/user.js';
 import Document from './models/document.js';
 import sequelize from './database/db.js';
-import { useTranslation } from 'adminjs'
+// import { useTranslation } from 'adminjs'
 import { superAuth} from './middlewares/superauth.js'
 
 
@@ -66,70 +66,70 @@ const authenticate = async (email, password) => {
     return null
 }
 
-AdminJS.registerAdapter({ Database, Resource })
+// AdminJS.registerAdapter({ Database, Resource })
 
 const usersNavigation = {
     name: 'Users',
     icon: 'User',
 }
 
-const adminOptions = {
-    // databases: [sequelize],
-    branding: {
-        companyName: 'UETable', // title of page
-        logo: false,    // don't use adminJS default logo
-        softwareBrothers: false, // hide adminJS link
-        // favicon: ""
-    },
-    resources: [
-        {
-            resource: User,
-            options: {
-                navigation: 
-                {
-                    'icon': 'User',
-                },
-                listProperties: ['Id', 'StudentId', 'Name', ],
-                filterProperties: ['Id', 'StudentId', 'Name', ],
-                editProperties: ['StudentId', 'Name', 'Bio', 'Avatar'],
-                showProperties: ['Id', 'StudentId', 'Name', 'Bio', 'Avatar'],
-            },
-        },
-        {
-            resource: Document,
-            options: {
-                navigation: {
-                    // 'name': 'Documents',
-                    'icon': 'note',
-                },
-                listProperties: ['Id', 'Name', 'Category', 'Download', 'Like'],
-                // filterProperties: ['Id', 'StudentId', 'Name', ],
-                // editProperties: ['Id', 'StudentId', 'Name', 'Bio', 'Avatar'],
-                // showProperties: ['Id', 'StudentId', 'Name', 'Bio', 'Avatar'],
-            },
-        },
-        {
-            resource: sequelize.models.Subject,
-            options: {
-                navigation: {}
-            },
-        },
-        {
-            resource: sequelize.models.Comment,
-            options: {
-                navigation: {}
-            },
-        }, 
-        {
-            resource: sequelize.models.Report,
-            options: {
-                navigation: {}
-            },
-        }
-    ],
-}
+// const adminOptions = {
+//     // databases: [sequelize],
+//     branding: {
+//         companyName: 'UETable', // title of page
+//         logo: false,    // don't use adminJS default logo
+//         softwareBrothers: false, // hide adminJS link
+//         // favicon: ""
+//     },
+//     resources: [
+//         {
+//             resource: User,
+//             options: {
+//                 navigation: 
+//                 {
+//                     'icon': 'User',
+//                 },
+//                 listProperties: ['Id', 'StudentId', 'Name', ],
+//                 filterProperties: ['Id', 'StudentId', 'Name', ],
+//                 editProperties: ['StudentId', 'Name', 'Bio', 'Avatar'],
+//                 showProperties: ['Id', 'StudentId', 'Name', 'Bio', 'Avatar'],
+//             },
+//         },
+//         {
+//             resource: Document,
+//             options: {
+//                 navigation: {
+//                     // 'name': 'Documents',
+//                     'icon': 'note',
+//                 },
+//                 listProperties: ['Id', 'Name', 'Category', 'Download', 'Like'],
+//                 // filterProperties: ['Id', 'StudentId', 'Name', ],
+//                 // editProperties: ['Id', 'StudentId', 'Name', 'Bio', 'Avatar'],
+//                 // showProperties: ['Id', 'StudentId', 'Name', 'Bio', 'Avatar'],
+//             },
+//         },
+//         {
+//             resource: sequelize.models.Subject,
+//             options: {
+//                 navigation: {}
+//             },
+//         },
+//         {
+//             resource: sequelize.models.Comment,
+//             options: {
+//                 navigation: {}
+//             },
+//         }, 
+//         {
+//             resource: sequelize.models.Report,
+//             options: {
+//                 navigation: {}
+//             },
+//         }
+//     ],
+// }
 
-const adminJs = new AdminJS(adminOptions);
+// const adminJs = new AdminJS(adminOptions);
 // const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
 //     adminJs,
 //     {
@@ -146,7 +146,7 @@ const adminJs = new AdminJS(adminOptions);
 //       name: 'adminjs',
 //     }
 //   );
-const adminRouter = AdminJSExpress.buildRouter(adminJs)
-app.use(adminJs.options.rootPath, superAuth, adminRouter)
+// const adminRouter = AdminJSExpress.buildRouter(adminJs)
+// app.use(adminJs.options.rootPath, superAuth, adminRouter)
 
 app.listen(PORT, () => console.log(`Your server is running successfully on port ${PORT}`))
