@@ -1,5 +1,4 @@
 import User from "../models/user.js"
-import Auth from "../models/auth.js"
 import Authentication from '../middlewares/authentication.js'
 import UserDTO from '../dto/users.js'
 import UserHandleDTO from '../dto/userHandle.js'
