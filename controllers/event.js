@@ -85,8 +85,8 @@ export const updateEventById = async (req, res) => {
             res.status(403).json("Do not have permission!")
         } else{
             let etime, stime, day;
-            let start = new Date(req.body.timeStart);
-            let end = new Date(req.body.timeEnd);
+            let start = req.body.timeStart ? new Date(req.body.timeStart) : null;
+            let end = req.body.timeEnd ? new Date(req.body.timeEnd) : null;
             if (start !== null) {day = yyyymmdd(start); stime = hhmmss(start);}
             if (end !== null) etime = hhmmss(end);
 

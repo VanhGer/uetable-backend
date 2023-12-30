@@ -31,14 +31,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 app.use(cookieParser());
 const PORT = process.env.PORT;
-app.get('/', (req, res) => {
-    // const ipAddress = req.connection.remoteAddress
-    // const ipPort = req.connection.remotePort
-    // console.log(ipAddress);
-    // console.log(ipPort);
-    console.log(req.headers.host);
-    res.send('Hello World!')
-})
+// app.get('/', (req, res) => {
+//     // const ipAddress = req.connection.remoteAddress
+//     // const ipPort = req.connection.remotePort
+//     // console.log(ipAddress);
+//     // console.log(ipPort);
+//     console.log(req.headers.host);
+//     res.send('Hello World!')
+// })
+
+app.use('/', express.static('./out'))
+app.use('/links', express.static('./out'))
 
 app.use('/', PageRouter);
 app.use('/', MajorRouter);
@@ -85,7 +88,7 @@ const usersNavigation = {
 //         {
 //             resource: User,
 //             options: {
-//                 navigation: 
+//                 navigation:
 //                 {
 //                     'icon': 'User',
 //                 },
@@ -119,7 +122,7 @@ const usersNavigation = {
 //             options: {
 //                 navigation: {}
 //             },
-//         }, 
+//         },
 //         {
 //             resource: sequelize.models.Report,
 //             options: {
