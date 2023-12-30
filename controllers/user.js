@@ -31,7 +31,7 @@ export const registerUser = async (req, res) => {
         const token = jwt.sign({ name, studentid, password }, process.env.JWT_SECRET, { expiresIn: '30m' });
         const output = `
         <h2>Please click on below link to activate your account</h2>
-        <p>${url}/api/users/activate/${token}</p>
+        <p>${url}/signup/activate?token=${token}</p>
         <p><b>NOTE: </b> The above activation link expires in 30 minutes.</p>
         `;
         const transporter = nodemailer.createTransport({
@@ -124,7 +124,7 @@ export const getUserHandles = async (req, res) => {
         // console.log(users)
 
         const studentids = users.map((user) => UserHandleDTO.convertToDto(user))
-        
+
         res.status(200).send({
             studentids,
         })

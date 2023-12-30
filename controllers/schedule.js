@@ -8,6 +8,7 @@ import { Op } from "sequelize";
 import { getCoursebyStudentId } from "../middlewares/crawlCourse.js";
 import { START_CUR_TERM_DAY, END_CUR_TERM_DAY, CUR_TERM_ID } from "../constant.js";
 import {getRandColor} from '../utils/getRandColor.js'
+import {getDate} from '../utils/date.js'
 
 export const getScheduleInWeek = async (req, res) => {
     try {
@@ -70,12 +71,12 @@ export const getScheduleInWeek = async (req, res) => {
             let tmp = {};
             tmp.eventId = c.id;
             tmp.name = c.name;
-            let cur_start = `${c.day}T${c.timeStart}`;
-            tmp.timeStart = new Date(cur_start);
-            tmp.timeStart.setHours(tmp.timeStart.getHours() + 7);
-            let cur_end = `${c.day}T${c.timeEnd}`;
-            tmp.timeEnd = new Date(cur_end);
-            tmp.timeEnd.setHours(tmp.timeEnd.getHours() + 7);
+            // let cur_start = `${c.day}T${c.timeStart}`;
+            tmp.timeStart = getDate(c.timeStart, c.day);
+            // tmp.timeStart.setHours(tmp.timeStart.getHours() + 7);
+            // let cur_end = `${c.day}T${c.timeEnd}`;
+            tmp.timeEnd = getDate(c.timeEnd, c.day);
+            // tmp.timeEnd.setHours(tmp.timeEnd.getHours() + 7);
             tmp.color = c.color;
             tmp.location = c.location;
             tmp.info = c.info;
