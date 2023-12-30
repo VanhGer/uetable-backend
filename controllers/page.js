@@ -111,7 +111,7 @@ export const likeByPage = async (req, res) => {
                     }
                 })
                 let name = decodedUser.Name; 
-                await createNoti(document.UserId, `${name} đã thích tài liệu ${document.Name} của bạn`, page.PageUrl);
+                await createNoti(document.UserId, `${name} đã thích tài liệu ${document.Name} của bạn`, page.PageUrl, decodedUser.Id);
             } else if (pageType === 'C') {
                 let comment = await Comment.findOne({
                     raw: true,
@@ -127,7 +127,7 @@ export const likeByPage = async (req, res) => {
                 })
                 let name = decodedUser.Name; 
                 let content = comment.Content.substring(0, 20);
-                await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, page.PageUrl);
+                await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, page.PageUrl,  decodedUser.Id);
             }
         } else {
             userLike.Score = score;

@@ -1,10 +1,12 @@
 import Comment from "../models/comment.js";
 import PageComment from "../models/pageComment.js";
+import Page from "../models/page.js";
 import CommentDTO from "../dto/comments.js";
 import CommentVersionDTO from "../dto/commentVersion.js";
 import User from "../models/user.js";
 import VersionComment from "../models/versionComment.js";
 import Subject from "../models/subject.js";
+import Document from "../models/document.js";
 
 
 export const createComment = async (req, res) => {
@@ -44,6 +46,32 @@ export const createComment = async (req, res) => {
 
         await pageComment.save();
 
+        let page = await Page.findOne({
+            raw: true, 
+            where: {
+                PageId: pageId
+            }
+        })
+        let name = decodedUser.Name; 
+        if (pageType === 'D') {
+            let doc = await Document.findOne({
+                raw: true,
+                where: {
+                    Id: pageId
+                }
+            });
+            await createNoti(doc.UserId, `${name} bình luận tài liệu ${doc.Name} của bạn`, page.PageUrl, decodedUser.Id);
+        }
+
+        if (parentId != 0) {
+            let com = await Comment.findOne({
+                raw: true,
+                where: {
+                    Id: parentId
+                }
+            });
+            await createNoti(com.UserId, `${name} phản hồi bình luận của bạn`, page.PageUrl, decodedUser.Id);
+        }
         res.status(201).send({
             message: 'Comment successfully created',
             CommentId: comment.Id,
