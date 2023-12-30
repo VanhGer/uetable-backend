@@ -21,10 +21,6 @@ const Document = sequelize.define("Document", {
         type: DataTypes.DATE,
         defaultValue: sequelize.literal('NOW()')
     },
-    Like: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
 
     Download: {
         type: DataTypes.INTEGER,

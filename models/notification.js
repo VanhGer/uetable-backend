@@ -26,6 +26,10 @@ const Notification = sequelize.define("Notification", {
     allowNull: false
   },
 
+  SenderId: {
+    type: DataTypes.INTEGER,
+  },
+
   Seen: {
     type: DataTypes.BOOLEAN,
     defaultValue: false

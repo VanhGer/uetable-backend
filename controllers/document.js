@@ -153,6 +153,7 @@ export const getMyDocumentByStudentId = async(req, res) => {
             res.status(404).json("User not found");
             return;
         }
+        console.log(user.Id);
         let documentList = await Document.findAll({
             raw: true,
             where: {
