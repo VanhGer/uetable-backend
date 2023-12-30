@@ -161,7 +161,7 @@ CREATE TABLE `Comments` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `before_comment_create` BEFORE INSERT ON `Comments` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `before_comment_create` BEFORE INSERT ON `Comments` FOR EACH ROW BEGIN
     DECLARE last_id int;
 
     INSERT INTO Pages(PageType, PageUrl)
@@ -226,7 +226,7 @@ CREATE TABLE `Documents` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `before_document_create` BEFORE INSERT ON `Documents` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `before_document_create` BEFORE INSERT ON `Documents` FOR EACH ROW BEGIN
     DECLARE last_id int;
 
     INSERT INTO Pages(PageType, PageUrl)
@@ -314,7 +314,7 @@ CREATE TABLE `Events` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `remove_EventClass_before_remove_Event` BEFORE DELETE ON `Events` FOR EACH ROW Begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `remove_EventClass_before_remove_Event` BEFORE DELETE ON `Events` FOR EACH ROW Begin
 	Delete from EventClasses where EventId = OLD.Id;
 End */;;
 DELIMITER ;
@@ -513,7 +513,7 @@ CREATE TABLE `Reports` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `before_report_create` BEFORE INSERT ON `Reports` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `before_report_create` BEFORE INSERT ON `Reports` FOR EACH ROW BEGIN
     DECLARE last_id int;
 
     INSERT INTO Pages(PageType, PageUrl)
@@ -565,7 +565,7 @@ CREATE TABLE `Schedules` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `remove_Event_before_remove_Schedule` BEFORE DELETE ON `Schedules` FOR EACH ROW Begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `remove_Event_before_remove_Schedule` BEFORE DELETE ON `Schedules` FOR EACH ROW Begin
 	Delete from Events where ScheduleId = OLD.Id;
 End */;;
 DELIMITER ;
@@ -664,7 +664,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `add_Subjectlikes_after_user_like` AFTER INSERT ON `SubjectLikes` FOR EACH ROW Begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `add_Subjectlikes_after_user_like` AFTER INSERT ON `SubjectLikes` FOR EACH ROW Begin
 	Update Subjects
     Set Likes = Likes + 1
     Where Id = New.SubjectId;
@@ -683,7 +683,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `sub_Subjectlikes_after_user_unlike` AFTER DELETE ON `SubjectLikes` FOR EACH ROW Begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `sub_Subjectlikes_after_user_unlike` AFTER DELETE ON `SubjectLikes` FOR EACH ROW Begin
 	Update Subjects
     Set Likes = Likes - 1
     Where Id = Old.SubjectId;
@@ -736,7 +736,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `before_subject_create` BEFORE INSERT ON `Subjects` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `before_subject_create` BEFORE INSERT ON `Subjects` FOR EACH ROW BEGIN
     DECLARE last_id int;
 
     INSERT INTO Pages(PageType, PageUrl)
@@ -829,7 +829,7 @@ CREATE TABLE `UserScores` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `remove_Scores_after_remove_UserScores` AFTER DELETE ON `UserScores` FOR EACH ROW Begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `remove_Scores_after_remove_UserScores` AFTER DELETE ON `UserScores` FOR EACH ROW Begin
 	Delete from Scores where Id = OLD.ScoreId;
 End */;;
 DELIMITER ;
@@ -878,7 +878,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `add_schedule_after_user_create` AFTER INSERT ON `Users` FOR EACH ROW Begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `add_schedule_after_user_create` AFTER INSERT ON `Users` FOR EACH ROW Begin
 	Insert into Schedules(UserId) values (NEW.Id);
 End */;;
 DELIMITER ;
@@ -895,7 +895,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,ONLY_FULL_GROUP_BY,ANSI,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4@`%`*/ /*!50003 TRIGGER `remove_Everything_before_remove_User` BEFORE DELETE ON `Users` FOR EACH ROW Begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`fall2324w3g4`@`%`*/ /*!50003 TRIGGER `remove_Everything_before_remove_User` BEFORE DELETE ON `Users` FOR EACH ROW Begin
 	Delete from Schedules where UserId = OLD.Id;
     Delete from UserScores where UserId = OLD.Id;
     Delete from Documents where UserId = OLD.Id;
