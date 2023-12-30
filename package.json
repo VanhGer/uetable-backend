@@ -11,7 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-   
+    "@adminjs/express": "^5.1.0",
+    "@adminjs/sequelize": "^3.0.0",
+    "adminjs": "^6.8.7",
     "bcrypt": "^5.1.1",
     "cheerio": "^1.0.0-rc.12",
     "cloudinary": "^1.41.0",
