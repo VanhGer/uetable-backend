@@ -8,6 +8,8 @@ import Document from "../models/document.js";
 import { getPageLikes, getPageDislikes, getUserlikes } from "./page.js";
 import AccessSubject from "../models/accessSubject.js"
 import Score from "../models/score.js";
+import Page from "../models/page.js";
+import UserLike from "../models/userLike.js";
 
 export const getSubjectByName = async (req, res) => {
     try {
@@ -228,27 +230,63 @@ export const getPartSubject = async (req, res) => {
     try {
         let str = req.body.searchValue;
         const user = res.locals.decodedUser;
-        let subjectList = await Subject.findAll({
-            raw: true,
-            where: {
-                Name: {
-                    [Op.like]: `%${str}%`
-                }
-            }
-        });
-        for (let c of subjectList) {
-            let curStar = await getUserlikes(c.Id, 'S', user.Id);
-            if (curStar === null) {
-                c.star = 0;
-            } else {
-                c.star = 1;
-            }
+        let st = parseInt(req.body.from);
+        let end = parseInt(req.body.to);
+        let result = [];
+        if (req.body.sortBy == "last-access") {
+            let subjectList = await Subject.findAll({
+                raw: true,
+                where: {
+                    Name: {
+                        [Op.like]: `%${str}%`
+                    }
+                },
+                include: [
+                  {
+                    model: AccessSubject,
+                    required: false,
+                    where: {
+                      UserId: user.Id
+                    },
+                    order: [['LastAccess', 'DESC']]
+                  },
+                  {
+                    model: Page,
+                    include: {
+                        model: UserLike,
 
-            c.likes = await getPageLikes(c.Id, 'S');
-            c.lastAccess = await getLastAccessTime(c.Id, user.Id);
+                    }
+                  }
+                ],
+                offset: st - 1,
+                limit: end - st + 1
+            });
+            res.status(200).json(subjectList);
+            // let result = [];
+            // if (subjectList.length < end) {
+            //     end = subjectList.length;
+            // }
+            // if (st >= subjectList.length) {
+            //     res.status(404).json("Cannot find subjects in that range");
+            //     return;
+            // }
         }
 
-        let newSubj = subjectList;
+        // console.log(subjectList);
+        // for (let c of subjectList) {
+        //     // let curStar = await getUserlikes(c.Id, 'S', user.Id);
+        //     // if (curStar === null) {
+        //     //     c.star = 0;
+        //     // } else {
+        //     //     c.star = 1;
+        //     // }
+
+        //     // c.likes = await getPageLikes(c.Id, 'S');
+        //     // c.lastAccess = await getLastAccessTime(c.Id, user.Id);
+        //     console.log(c);
+        // }
+
+        // let newSubj = subjectList;
         // if (req.body.sortBy == "stared") {
         //     newSubj = subjectList.sort((a, b) => b.star - a.star);
 
@@ -258,21 +296,20 @@ export const getPartSubject = async (req, res) => {
         //     newSubj = subjectList.sort((a, b) => b.getLastAccessTime - a.getLastAccessTime);
         //     // console.log(newSubj);
         // }
-        let st = parseInt(req.body.from);
-        let end = parseInt(req.body.to);
-        let result = [];
-        if (newSubj.length < end) {
-            end = newSubj.length;
-        }
-        if (st >= newSubj.length) {
-            res.status(404).json("Cannot find subjects in that range");
-            return;
-        }
 
-        for (let i = st-1; i < end; i++) {
-            let c = newSubj[i];
+        // let result = [];
+        // if (newSubj.length < end) {
+        //     end = newSubj.length;
+        // }
+        // if (st >= newSubj.length) {
+        //     res.status(404).json("Cannot find subjects in that range");
+        //     return;
+        // }
+
+        // for (let i = st-1; i < end; i++) {
+        //     let c = newSubj[i];
             // console.log(newSubj[i]);
-            let tmp = {};
+            // let tmp = {};
             // let userScore = await UserScore.findOne({
             //     raw: true,
             //     where: {
@@ -290,22 +327,22 @@ export const getPartSubject = async (req, res) => {
             //     });
             //     score = {'final': sc.total10};
             // }
-            tmp.code = c.Code;
-            tmp.id = c.Id;
-            tmp.name = c.Name;
-            tmp.credits = c.Credit;
-            tmp.type = "all";
+            // tmp.code = c.Code;
+            // tmp.id = c.Id;
+            // tmp.name = c.Name;
+            // tmp.credits = c.Credit;
+            // tmp.type = "all";
             // tmp.score = score;
-            tmp.like = c.likes;
-            tmp.stared = c.star === 1;
-            tmp.documents = await getNumberDocument(c.Id);
+            // tmp.like = c.likes;
+            // tmp.stared = c.star === 1;
+            // tmp.documents = await getNumberDocument(c.Id);
             // tmp.letterGrade = await getFinalScore(c.Id, user.Id);
-            result.push(tmp);
-        }
-        res.status(200).json(result);
-
+            // result.push(tmp);
+        // }
+        // res.status(200).json(result);
+        // res.status(200).json("ok");
 
     } catch (err) {
-        res.status(500).json(res);
+        res.status(500).json(err);
     }
 }

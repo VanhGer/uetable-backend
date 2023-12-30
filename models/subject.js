@@ -34,4 +34,5 @@ const Subject = sequelize.define("Subject", {
     timestamps: false,
 });
 
+
 export default Subject;

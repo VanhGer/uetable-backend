@@ -136,9 +136,10 @@ export const getSubjectInWeek = async (req, res) => {
                 }
             },
             attributes: [
-                'name', 'timeStart', 'timeEnd', 'day', 'location', 'info', 'color',
+                'id','name', 'timeStart', 'timeEnd', 'day', 'location', 'info', 'color',
                 // [sequelize.col('Classes.Code'), 'classCode'],
-                [sequelize.col('Classes.Subject.Id'), 'id'],
+                
+                [sequelize.col('Classes.Subject.Id'), 'subId'],
                 [sequelize.col('Classes.Teacher'), 'teacher'],
                 [sequelize.col('Classes.number'), 'number'],
                 [sequelize.col('Classes.group'), 'group'],
@@ -160,7 +161,8 @@ export const getSubjectInWeek = async (req, res) => {
             if (c.id === null)
                 continue;
             let tmp = {};
-            tmp.id = c.id;
+            tmp.id = c.subId;
+            tmp.eventId = c.id;
             tmp.code = c.code;
             tmp.lessonStart = c.lessonStart;
             tmp.lessonEnd = c.lessonEnd;

@@ -1,6 +1,6 @@
 import { DataTypes} from "sequelize";
 import sequelize from "../database/db.js";
-
+import Subject from "./subject.js";
 const AccessSubject = sequelize.define("AccessSubject", {
     Id: {
       type: DataTypes.INTEGER,
@@ -30,4 +30,10 @@ const AccessSubject = sequelize.define("AccessSubject", {
     timestamps: false,
 });
 
+Subject.hasMany(AccessSubject);
+// UserScore.belongsTo(Subject, {
+//     foreignKey: 'SubjectId'
+// })
+
+AccessSubject.belongsTo(Subject, { foreignKey: 'SubjectId' });
 export default AccessSubject;
