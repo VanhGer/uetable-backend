@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
-import 'dotenv/config'
+import dotenv from 'dotenv';
+dotenv.config({ path: '../.env' });
 
 export default class Authentication {
     static privateKey() {

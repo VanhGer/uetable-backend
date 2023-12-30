@@ -1,6 +1,7 @@
 
-import 'dotenv/config'
- 
+import dotenv from 'dotenv';
+dotenv.config({ path: '../.env' });
+
 module.exports = {
     port: process.env.PORT,
     auth: {

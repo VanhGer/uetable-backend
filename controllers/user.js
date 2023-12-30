@@ -7,6 +7,8 @@ import { crawlAllCourseWithInitMark } from "../middlewares/crawlCourse.js"
 import nodemailer from "nodemailer";
 import jwt, { decode } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import dotenv from 'dotenv';
+dotenv.config({ path: '../.env' });
 
 
 export const registerUser = async (req, res) => {
