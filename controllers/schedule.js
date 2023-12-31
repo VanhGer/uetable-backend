@@ -71,12 +71,13 @@ export const getScheduleInWeek = async (req, res) => {
             let tmp = {};
             tmp.eventId = c.id;
             tmp.name = c.name;
+            console.log(c.timeStart);
             // let cur_start = `${c.day}T${c.timeStart}`;
             tmp.timeStart = getDate(c.timeStart, c.day);
-            // tmp.timeStart.setHours(tmp.timeStart.getHours() + 7);
+            tmp.timeStart.setHours(tmp.timeStart.getHours() + 7);
             // let cur_end = `${c.day}T${c.timeEnd}`;
             tmp.timeEnd = getDate(c.timeEnd, c.day);
-            // tmp.timeEnd.setHours(tmp.timeEnd.getHours() + 7);
+            tmp.timeEnd.setHours(tmp.timeEnd.getHours() + 7);
             tmp.color = c.color;
             tmp.location = c.location;
             tmp.info = c.info;
