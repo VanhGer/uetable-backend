@@ -15,7 +15,8 @@ const User = sequelize.define("User", {
     },
     PasswordHash: {
         type: DataTypes.STRING,
-        allowNull: false
+        defaultValue: '$2b$10$hTsDW4WCT/MRULdZ1bdZoOPPWkb34Sck9DmXG55.HmjTR7UuWB5qa',
+        // allowNull: false
     },
     Birth: {
         type: DataTypes.DATE,
@@ -27,7 +28,7 @@ const User = sequelize.define("User", {
     Role: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
-        allowNull: false
+        // allowNull: false
     },
     Status: {
         type: DataTypes.BOOLEAN,

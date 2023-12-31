@@ -122,7 +122,7 @@ const adminOptions = {
                 },
                 listProperties: ['Id', 'StudentId', 'Name', ],
                 filterProperties: ['Id', 'StudentId', 'Name', ],
-                editProperties: ['StudentId', 'Name', 'Bio', 'Avatar'],
+                editProperties: ['StudentId', 'Name', 'Bio', 'Avatar', 'Role'],
                 showProperties: ['Id', 'StudentId', 'Name', 'Bio', 'Avatar'],
             },
         },
