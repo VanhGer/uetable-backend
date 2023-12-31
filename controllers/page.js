@@ -63,7 +63,7 @@ export const getCommentCountByPage = async (req, res) => {
             where: {
                 PageId: pageId,
                 pageType: pageType,
-                // parentId: 0,
+                parentId: 0,
             },
         });
 
