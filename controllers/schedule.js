@@ -138,7 +138,7 @@ export const getSubjectInWeek = async (req, res) => {
             attributes: [
                 'id','name', 'timeStart', 'timeEnd', 'day', 'location', 'info', 'color',
                 // [sequelize.col('Classes.Code'), 'classCode'],
-                
+
                 [sequelize.col('Classes.Subject.Id'), 'subId'],
                 [sequelize.col('Classes.Teacher'), 'teacher'],
                 [sequelize.col('Classes.number'), 'number'],
@@ -158,7 +158,7 @@ export const getSubjectInWeek = async (req, res) => {
             return;
         }
         for (let c of eventList) {
-            if (c.id === null)
+            if (c.id === null || c.subId === null)
                 continue;
             let tmp = {};
             tmp.id = c.subId;
