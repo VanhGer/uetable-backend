@@ -22,6 +22,9 @@ const { Database, Resource } = pkg;
 import User from './models/user.js';
 import Document from './models/document.js';
 import sequelize from './database/db.js';
+import path from 'path'
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 // import { useTranslation } from 'adminjs'
 //import { superAuth} from './middlewares/superauth.js'
 const { useTranslation } = pkg;
@@ -40,35 +43,95 @@ const PORT = process.env.PORT;
     // console.log(req.headers.host);
     //res.status(200).send('Hello World!')
 //})
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 app.use('/', express.static('./out'));
-app.use('/404', express.static('./out'));
-app.use('/all-subjects', express.static('./out'));
-app.use('/comment', express.static('./out'));
-app.use('/forgotpassword', express.static('./out'));
-app.use('/links', express.static('./out'));
-app.use('/profile', express.static('./out'));
-app.use('/resetpassword', express.static('./out'));
-app.use('/signin', express.static('./out'));
-app.use('/signup', express.static('./out'));
-app.use('/credit', express.static('./out'));
-app.use('/statistic/gpa', express.static('./out'));
-app.use('/statistic/credit', express.static('./out'));
-app.use('/statistic/personal', express.static('./out'));
-app.use('/statistic/subject', express.static('./out'));
-app.use('/signup/activate', express.static('./out'));
-app.use('/settings/profile', express.static('./out'));
-app.use('/schedule/calendar', express.static('./out'));
-app.use('/schedule/exam', express.static('./out'));
-app.use('/schedule/subject-class', express.static('./out'));
-app.use('/mysubjects/curriculum', express.static('./out'));
-app.use('/mysubjects/registered', express.static('./out'));
-app.use('/mysubjects/semester', express.static('./out'));
-app.use('/mysubjects/registered/details', express.static('./out'));
-app.use('/images', express.static('./out'));
-app.use('/all-subjects/details', express.static('./out'));
-app.use('/all-subjects/documents', express.static('./out'));
-app.use('/all-subjects/documents/details', express.static('./out'));
+app.get('/:suffix', (req, res) => {
+    let suffix = req.params.suffix;
+    res.sendFile(path.join(__dirname, 'out', `${suffix}.html`));
+});
+// app.get('/all-subjects', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'out', 'all-subjects.html'));
+// });
+// app.get('/comment', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'out', 'comment.html'));
+// });
+// app.get('/forgotpassword', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'out', 'forgotpassword.html'));
+// });
+// app.get('/links', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'out', 'links.html'));
+// });
+// app.get('/profile', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'out', 'profile.html'));
+// });
+// app.get('/resetpassword', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'out', 'resetpassword.html'));
+// });
+// app.get('/signin', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'out', 'signin.html'));
+// });
+
+// app.get('/signup', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'out', 'signup.html'));
+// });
+// app.get('/credit', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'out', 'credit.html'));
+// });
+
+// app.use('/credit', express.static('./out'));
+app.get('/statistic/:suffix', (req, res) => {
+    let suffix = req.params.suffix;
+    res.sendFile(path.join(__dirname, 'out', 'statistic', `${suffix}.html`));
+});
+// app.use('/statistic/gpa', express.static('./out'));
+// app.use('/statistic/credit', express.static('./out'));
+// app.use('/statistic/personal', express.static('./out'));
+// app.use('/statistic/subject', express.static('./out'));
+app.get('/signup/activate', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'signup', `activate.html`));
+});
+// app.use('/signup/activate', express.static('./out'));
+app.get('/settings/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'settings', `profile.html`));
+});
+// app.use('/settings/profile', express.static('./out'));
+
+app.get('/schedule/:suffix', (req, res) => {
+    let suffix = req.params.suffix;
+    res.sendFile(path.join(__dirname, 'out', 'schedule', `${suffix}.html`));
+});
+// app.use('/schedule/calendar', express.static('./out'));
+// app.use('/schedule/exam', express.static('./out'));
+// app.use('/schedule/subject-class', express.static('./out'));
+app.get('/mysubjects/:suffix', (req, res) => {
+    let suffix = req.params.suffix;
+    res.sendFile(path.join(__dirname, 'out', 'mysubjects', `${suffix}.html`));
+});
+
+// app.use('/mysubjects/curriculum', express.static('./out'));
+// app.use('/mysubjects/registered', express.static('./out'));
+// app.use('/mysubjects/semester', express.static('./out'));
+app.get('/mysubjects/registered/details', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'mysubjects','registered' `details.html`));
+});
+// app.use('/mysubjects/registered/details', express.static('./out'));
+app.get('/images', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'images'));
+});
+// app.use('/images', express.static('./out'));
+app.get('/all-subjects/:suffix', (req, res) => {
+    let suffix = req.params.suffix;
+    res.sendFile(path.join(__dirname, 'out', 'all-subjects', `${suffix}.html`));
+});
+
+// app.use('/all-subjects/details', express.static('./out'));
+// app.use('/all-subjects/documents', express.static('./out'));
+app.get('/all-subjects/documents/details', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'all-subjects','documents' `details.html`));
+});
+// app.use('/all-subjects/documents/details', express.static('./out'));
 
 
 app.use('/', PageRouter);
