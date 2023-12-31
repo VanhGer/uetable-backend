@@ -55,7 +55,7 @@ export const createComment = async (req, res) => {
         })
         let name = decodedUser.Name; 
         
-        if (parentId != 0) {
+        if (parentId !== 0) {
             let com = await Comment.findOne({
                 raw: true,
                 where: {
@@ -71,9 +71,9 @@ export const createComment = async (req, res) => {
             });
             if (comment.UserId !== decodedUser.Id) {
                 if (pageCom.PageType === 'D') {
-                    await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
+                    await createNoti(comment.UserId, `${name} đã phản hồi bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
                 } else {
-                    await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);
+                    await createNoti(comment.UserId, `${name} đã phản hồi bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);
                 }
             }
             
