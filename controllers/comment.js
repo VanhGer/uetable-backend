@@ -54,16 +54,7 @@ export const createComment = async (req, res) => {
             }
         })
         let name = decodedUser.Name; 
-        if (pageType === 'D') {
-            let doc = await Document.findOne({
-                raw: true,
-                where: {
-                    Id: pageId
-                }
-            });
-            await createNoti(doc.UserId, `${name} bình luận tài liệu ${doc.Name} của bạn`, page.PageUrl, decodedUser.Id);
-        }
-
+        
         if (parentId != 0) {
             let com = await Comment.findOne({
                 raw: true,
@@ -71,7 +62,27 @@ export const createComment = async (req, res) => {
                     Id: parentId
                 }
             });
-            await createNoti(com.UserId, `${name} phản hồi bình luận của bạn`, page.PageUrl, decodedUser.Id);
+
+            let pageCom = await PageComment.findOne({
+                raw: true,
+                where: {
+                    CommentId: com.Id
+                }
+            });
+
+            if (pageCom.PageType === 'C') {
+                await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
+            } else {
+                await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);
+            }
+        } else if (pageType === 'D') {
+            let doc = await Document.findOne({
+                raw: true,
+                where: {
+                    Id: pageId
+                }
+            });
+            await createNoti(doc.UserId, `${name} bình luận tài liệu ${doc.Name} của bạn`, "/all-subjects/documents/details?documentId="+ doc.Id, decodedUser.Id);
         }
         res.status(201).send({
             message: 'Comment successfully created',

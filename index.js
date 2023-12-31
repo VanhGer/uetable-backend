@@ -139,7 +139,7 @@ app.get('/mysubjects/semester', (req, res) => {
 // app.use('/mysubjects/registered', express.static('./out'));
 // app.use('/mysubjects/semester', express.static('./out'));
 app.get('/mysubjects/registered/details', (req, res) => {
-    res.sendFile(path.join(__dirname, 'out', 'mysubjects','registered' `details.html`));
+    res.sendFile(path.join(__dirname, 'out', 'mysubjects','registered', `details.html`));
 });
 // app.use('/mysubjects/registered/details', express.static('./out'));
 app.get('/images', (req, res) => {
