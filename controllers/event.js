@@ -13,6 +13,8 @@ export const createEvent = async (req, res) => {
         });
         let start = new Date(req.body.timeStart);
         let end = new Date(req.body.timeEnd);
+        start.setHours(start.getHours() + 7);
+        end.setHours(end.getHours() + 7);
         let stime = hhmmss(start);
         let etime = hhmmss(end);
         let day = yyyymmdd(start);

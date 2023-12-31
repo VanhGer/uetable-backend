@@ -63,7 +63,7 @@ export const getCommentCountByPage = async (req, res) => {
             where: {
                 PageId: pageId,
                 pageType: pageType,
-                // parentId: 0,
+                parentId: 0,
             },
         });
 
@@ -111,7 +111,7 @@ export const likeByPage = async (req, res) => {
                     }
                 })
                 let name = decodedUser.Name; 
-                await createNoti(document.UserId, `${name} đã thích tài liệu ${document.Name} của bạn`, page.PageUrl, decodedUser.Id);
+                if (document.UserId !== decodedUser.Id) await createNoti(document.UserId, `${name} đã thích tài liệu ${document.Name} của bạn`, "/all-subjects/documents/details?documentId="+document.Id, decodedUser.Id);
             } else if (pageType === 'C') {
                 let comment = await Comment.findOne({
                     raw: true,
@@ -124,10 +124,25 @@ export const likeByPage = async (req, res) => {
                     where: {
                         PageId: pageId
                     }
-                })
+                });
+                let pageCom = await PageComment.findOne({
+                    raw: true,
+                    where: {
+                        CommentId: comment.Id
+                    }
+                });
+
+
                 let name = decodedUser.Name; 
                 let content = comment.Content.substring(0, 20);
-                await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, page.PageUrl,  decodedUser.Id);
+                if (comment.UserId !== decodedUser.UserId) {
+                    if (pageCom.PageType === 'D') {
+                        await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
+                    } else {
+                        await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);
+                    }
+                }
+                
             }
         } else {
             userLike.Score = score;

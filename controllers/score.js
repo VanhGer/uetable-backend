@@ -68,6 +68,7 @@ export async function semesterInfoById(userId, id) {
         result.cnt = result.sumOfCredits;
         result.sumOfCredits += tmp;
         result.yearGPA = await calYearGPA(userId, id);
+        // console.log("yearGPA: ", result.yearGPA);
         return result;
 
     } catch (err) {
@@ -264,9 +265,10 @@ async function calTempAllGPA(listOfSubjects, userId, semId) {
 }
 
 /** Get GPA in a year */
-async function calYearGPA(Id, semId) {
+async function calYearGPA(Id, ssemId) {
     try {
         let allSem = [];
+        let semId = parseInt(ssemId);
         if (semId % 3 == 1) {
             allSem.push(semId);  allSem.push(semId + 1); allSem.push(semId + 2);
         } else if (semId % 3 == 0) {
@@ -274,7 +276,7 @@ async function calYearGPA(Id, semId) {
         } else {
             allSem.push(semId - 1); allSem.push(semId); allSem.push(semId + 1);
         }
-
+        // console.log("allSem:",allSem);
         let totalScore = await UserScore.findAll({
             raw: true,
             where: {
@@ -284,8 +286,9 @@ async function calYearGPA(Id, semId) {
                 }
             },
             include: [Score, Subject],
-            attributes: ['Subject.Credit', 'Subject.Code', 'Score.total10']
+            attributes: ['Subject.Credit', 'Subject.Code', 'Score.total4']
         });
+        // console.log(totalScore);
         let total4 = 0.0;
         let cres = 0;
         for (let c of totalScore) {
@@ -303,9 +306,10 @@ async function calYearGPA(Id, semId) {
 }
 
 /** Get temparary GPA in a year */
-async function calTempYearGPA(listOfSubjects, userId, semId) {
+async function calTempYearGPA(listOfSubjects, userId, ssemId) {
     try {
         let allSem = [];
+        let semId = parseInt(ssemId);
         if (semId % 3 == 1) {
             allSem.push(semId + 1); allSem.push(semId + 2);
         } else if (semId % 3 == 0) {
@@ -323,7 +327,7 @@ async function calTempYearGPA(listOfSubjects, userId, semId) {
                 }
             },
             include: [Score, Subject],
-            attributes: ['Subject.Credit', 'Subject.Code', 'Score.total10']
+            attributes: ['Subject.Credit', 'Subject.Code', 'Score.total4']
         });
         // console.log(totalScore);
         let total4 = 0.0;
