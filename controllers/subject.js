@@ -131,10 +131,18 @@ export const getRegisteredSubjectInfo = async (req, res) => {
         result.name = subject.Name;
         result.credits = subject.Credit;
         result.score = {};
-        result.score.midTerm = {'score': userScore['Score.midExamScore'], 'weight': userScore['Score.midExamWeight']};
-        result.score.finalTerm = {'score': userScore['Score.finalExamScore'], 'weight': userScore['Score.finalExamWeight']};
-        result.score.final = userScore['Score.total10'];
-        result.semesterId = userScore.SemesterId;
+        if (userScore === null) {
+            result.score.midTerm = {'score': 0, 'weight': 0};
+            result.score.finalTerm = {'score': 0, 'weight': 0};
+            result.score.final = 0;
+            // result.semesterId = 10;
+        } else {
+            result.score.midTerm = {'score': userScore['Score.midExamScore'], 'weight': userScore['Score.midExamWeight']};
+            result.score.finalTerm = {'score': userScore['Score.finalExamScore'], 'weight': userScore['Score.finalExamWeight']};
+            result.score.final = userScore['Score.total10'];
+            result.semesterId = userScore.SemesterId;
+        }
+    
         result.type = "registered";
         result.lecturer = subject.Classes[0].Teacher;
         res.status(200).json(result);
