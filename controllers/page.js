@@ -111,7 +111,7 @@ export const likeByPage = async (req, res) => {
                     }
                 })
                 let name = decodedUser.Name; 
-                await createNoti(document.UserId, `${name} đã thích tài liệu ${document.Name} của bạn`, "/all-subjects/documents/details?documentId="+document.Id, decodedUser.Id);
+                if (document.UserId !== decodedUser.Id) await createNoti(document.UserId, `${name} đã thích tài liệu ${document.Name} của bạn`, "/all-subjects/documents/details?documentId="+document.Id, decodedUser.Id);
             } else if (pageType === 'C') {
                 let comment = await Comment.findOne({
                     raw: true,
@@ -135,11 +135,14 @@ export const likeByPage = async (req, res) => {
 
                 let name = decodedUser.Name; 
                 let content = comment.Content.substring(0, 20);
-                if (pageCom.PageType === 'D') {
-                    await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
-                } else {
-                    await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);
+                if (comment.UserId !== decodedUser.UserId) {
+                    if (pageCom.PageType === 'D') {
+                        await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
+                    } else {
+                        await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);
+                    }
                 }
+                
             }
         } else {
             userLike.Score = score;
