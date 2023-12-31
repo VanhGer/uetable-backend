@@ -41,7 +41,35 @@ const PORT = process.env.PORT;
     //res.status(200).send('Hello World!')
 //})
 
-app.use('/', express.static('./out'))
+app.use('/', express.static('./out'));
+app.use('/404', express.static('./out'));
+app.use('/all-subjects', express.static('./out'));
+app.use('/comment', express.static('./out'));
+app.use('/forgotpassword', express.static('./out'));
+app.use('/links', express.static('./out'));
+app.use('/profile', express.static('./out'));
+app.use('/resetpassword', express.static('./out'));
+app.use('/signin', express.static('./out'));
+app.use('/signup', express.static('./out'));
+app.use('/credit', express.static('./out'));
+app.use('/statistic/gpa', express.static('./out'));
+app.use('/statistic/credit', express.static('./out'));
+app.use('/statistic/personal', express.static('./out'));
+app.use('/statistic/subject', express.static('./out'));
+app.use('/signup/activate', express.static('./out'));
+app.use('/settings/profile', express.static('./out'));
+app.use('/schedule/calendar', express.static('./out'));
+app.use('/schedule/exam', express.static('./out'));
+app.use('/schedule/subject-class', express.static('./out'));
+app.use('/mysubjects/curriculum', express.static('./out'));
+app.use('/mysubjects/registered', express.static('./out'));
+app.use('/mysubjects/semester', express.static('./out'));
+app.use('/mysubjects/registered/details', express.static('./out'));
+app.use('/images', express.static('./out'));
+app.use('/all-subjects/details', express.static('./out'));
+app.use('/all-subjects/documents', express.static('./out'));
+app.use('/all-subjects/documents/details', express.static('./out'));
+
 
 app.use('/', PageRouter);
 app.use('/', MajorRouter);
