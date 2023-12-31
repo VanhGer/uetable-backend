@@ -226,9 +226,9 @@ function lessonToTime(lesson) {
     return str + ":00:00";
 }
 
-export const autoCreateEventClass = async (req, res) => {
+export async function autoCreateEventClass(user) {
     try {
-        const user = res.locals.decodedUser;
+        
         const sche = await Schedule.findOne({
             where: {
                 UserId: user.Id,
@@ -280,13 +280,9 @@ export const autoCreateEventClass = async (req, res) => {
                 await newClassEvent.save();
 
             }
-
-            console.log(cla);
         }
-
-
-        res.status(200).json("create successfully");
+        return ("created successfully");
     } catch (err) {
-        res.status(500).json(err.message);
+        throw err;
     }
 }
