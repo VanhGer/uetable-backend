@@ -262,7 +262,19 @@ export const authenticateUser = async (req, res) => {
             },
         })
 
-        if (!user || !user.validatePassword(body.password)) {
+        // if (!user || !user.validatePassword(body.password)) {
+        //     res.status(401).send({
+        //         error: 'Incorrect studentid or password',
+        //     })
+        //     return
+        // }
+        if (!user) {
+            res.status(403).send({
+                error: 'Not found account',
+            })
+            return
+        } 
+        if (!user.validatePassword(body.password)) {
             res.status(401).send({
                 error: 'Incorrect studentid or password',
             })

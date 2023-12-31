@@ -7,6 +7,7 @@ import User from "../models/user.js";
 import VersionComment from "../models/versionComment.js";
 import Subject from "../models/subject.js";
 import Document from "../models/document.js";
+import { createNoti } from "../controllers/notification.js";
 
 
 export const createComment = async (req, res) => {
