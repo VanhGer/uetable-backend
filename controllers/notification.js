@@ -44,6 +44,7 @@ export const getNotification = async (req, res) => {
                 delete c.UserId;
                 ans.push(c);
             }
+            ans.reverse();
             res.status(200).json(ans);
         }
     } catch (err) {
