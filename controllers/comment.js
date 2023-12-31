@@ -70,7 +70,7 @@ export const createComment = async (req, res) => {
                 }
             });
 
-            if (pageCom.PageType === 'C') {
+            if (pageCom.PageType === 'D') {
                 await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
             } else {
                 await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);

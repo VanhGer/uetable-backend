@@ -135,7 +135,7 @@ export const likeByPage = async (req, res) => {
 
                 let name = decodedUser.Name; 
                 let content = comment.Content.substring(0, 20);
-                if (pageCom.PageType === 'C') {
+                if (pageCom.PageType === 'D') {
                     await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
                 } else {
                     await createNoti(comment.UserId, `${name} đã thích bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);
