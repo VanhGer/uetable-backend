@@ -156,12 +156,16 @@ app.get('/all-subjects/documents', (req, res) => {
 // app.use('/all-subjects/details', express.static('./out'));
 // app.use('/all-subjects/documents', express.static('./out'));
 app.get('/all-subjects/documents/details', (req, res) => {
-    res.sendFile(path.join(__dirname, 'out', 'all-subjects','documents' `details.html`));
+    res.sendFile(path.join(__dirname, 'out', 'all-subjects','documents', `details.html`));
 });
 // app.use('/all-subjects/documents/details', express.static('./out'));
 app.get('/_next/image', (req, res) => {
     let suffix = req.query.url;
     res.sendFile(path.join(__dirname, 'out', `${suffix}`));
+});
+
+app.get('/search', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'search.html'));
 });
 
 app.use('/', PageRouter);
