@@ -69,13 +69,13 @@ export const createComment = async (req, res) => {
                     CommentId: com.Id
                 }
             });
-            if (comment.UserId !== decodedUser.Id) {
+            // if (comment.UserId !== decodedUser.Id) {
                 if (pageCom.PageType === 'D') {
-                    await createNoti(comment.UserId, `${name} đã phản hồi bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  decodedUser.Id);
+                    await createNoti( decodedUser.Id,  `${name} đã phản hồi bình luận "${content}" của bạn`, "/all-subjects/documents/details?documentId="+ pageCom.PageId,  comment.UserId);
                 } else {
-                    await createNoti(comment.UserId, `${name} đã phản hồi bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  decodedUser.Id);
+                    await createNoti( decodedUser.Id, `${name} đã phản hồi bình luận "${content}" của bạn`, "/all-subjects/details?subjectId="+ pageCom.PageId,  comment.UserId);
                 }
-            }
+            // }
             
         } else if (pageType === 'D') {
             let doc = await Document.findOne({
