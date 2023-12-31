@@ -38,7 +38,8 @@ const User = sequelize.define("User", {
         type: DataTypes.STRING,
     },
     Avatar: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        defaultValue: "https://www.shareicon.net/data/128x128/2016/05/24/770137_man_512x512.png"
     }
  },
  {
