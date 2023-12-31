@@ -101,7 +101,7 @@ export const getAllSemesterInfo = async(req, res) => {
         let result = {};
         result.totalGPA = 0.0;
         result.credits = 0;
-        // result.totalGPA4 = 0.0;
+        result.totalGPA4 = 0.0;
         result.semesterInfo = [];
 
         result.cnt = 0;
@@ -114,7 +114,7 @@ export const getAllSemesterInfo = async(req, res) => {
                 result.credits += semInfo.sumOfCredits;
                 result.cnt += semInfo.cnt;
                 result.totalGPA += semInfo.totalMark10;
-                // result.totalGPA4 += semInfo.totalMark4;
+                result.totalGPA4 += semInfo.totalMark4;
                 delete semInfo.cnt;
                 delete semInfo.totalMark10;
                 console.log(semInfo);
@@ -125,7 +125,7 @@ export const getAllSemesterInfo = async(req, res) => {
         }
         if (result.cnt > 0) {
             result.totalGPA /= result.cnt;
-            // result.totalGPA4 /= result.credit;
+            result.totalGPA4 /= result.cnt;
         }
         delete result.cnt;
         res.status(200).json(result);
@@ -208,13 +208,25 @@ export const updateSemesterCourseList = async(req, res) => {
     }
 }
 
+function changeMark(mark10) {
+    if (mark10 < 4.0) return 0.0;
+    if (mark10 < 5.0) return 1.0;
+    if (mark10 < 5.5) return 1.5;
+    if (mark10 < 6.5) return 2.0;
+    if (mark10 < 7.0) return 2.5;
+    if (mark10 < 8.0) return 3.0;
+    if (mark10 < 8.5) return 3.5;
+    if (mark10 < 9.0) return 3.7;
+    return 4.0;
+}
+
 function calGPA(listOfSubjects) {
     let total = 0.0;
     let credits = 0;
     for (let c of listOfSubjects) {
         if (c.code.startsWith("PES")) continue;
         credits += c.credits;
-        total += c.score.final * c.credits;
+        total += changeMark(c.score.final) * c.credits;
     }
     if (credits == 0) return 0;
     return (total / credits);
@@ -274,15 +286,15 @@ async function calYearGPA(Id, semId) {
             include: [Score, Subject],
             attributes: ['Subject.Credit', 'Subject.Code', 'Score.total10']
         });
-        let total10 = 0.0;
+        let total4 = 0.0;
         let cres = 0;
         for (let c of totalScore) {
             if (c.Code.startsWith("PES")) continue;
-            total10 += c.total10 * c.Credit;
+            total4 += c.total4 * c.Credit;
             cres += c.Credit;
         }
         if (cres == 0) return 0;
-        return (total10 / cres);
+        return (total4 / cres);
 
 
     } catch(err) {
@@ -314,11 +326,11 @@ async function calTempYearGPA(listOfSubjects, userId, semId) {
             attributes: ['Subject.Credit', 'Subject.Code', 'Score.total10']
         });
         // console.log(totalScore);
-        let total10 = 0.0;
+        let total4 = 0.0;
         let cres = 0;
         for (let c of totalScore) {
             if (c.Code.startsWith("PES")) continue;
-            total10 += c.total10 * c.Credit;
+            total4 += c.total4 * c.Credit;
             cres += c.Credit;
         }
 
@@ -326,11 +338,11 @@ async function calTempYearGPA(listOfSubjects, userId, semId) {
             if (c.code.startsWith("PES")) continue;
             // console.log(c);
             cres += c.credits;
-            total10 += c.score.final * c.credits;
+            total4 += changeMark(c.score.final) * c.credits;
         }
         // console.log(total10 / cres);
         if (cres == 0) return 0;
-        return (total10 / cres);
+        return (total4 / cres);
 
 
     } catch(err) {

@@ -47,44 +47,55 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 app.use('/', express.static('./out'));
-app.get('/:suffix', (req, res) => {
-    let suffix = req.params.suffix;
-    res.sendFile(path.join(__dirname, 'out', `${suffix}.html`));
+// app.get('/:suffix', (req, res) => {
+//     let suffix = req.params.suffix;
+//     res.sendFile(path.join(__dirname, 'out', `${suffix}.html`));
+// });
+app.get('/all-subjects', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'all-subjects.html'));
 });
-// app.get('/all-subjects', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'out', 'all-subjects.html'));
-// });
-// app.get('/comment', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'out', 'comment.html'));
-// });
-// app.get('/forgotpassword', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'out', 'forgotpassword.html'));
-// });
-// app.get('/links', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'out', 'links.html'));
-// });
-// app.get('/profile', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'out', 'profile.html'));
-// });
-// app.get('/resetpassword', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'out', 'resetpassword.html'));
-// });
-// app.get('/signin', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'out', 'signin.html'));
-// });
-
-// app.get('/signup', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'out', 'signup.html'));
-// });
-// app.get('/credit', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'out', 'credit.html'));
-// });
-
-// app.use('/credit', express.static('./out'));
-app.get('/statistic/:suffix', (req, res) => {
-    let suffix = req.params.suffix;
-    res.sendFile(path.join(__dirname, 'out', 'statistic', `${suffix}.html`));
+app.get('/comment', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'comment.html'));
 });
+app.get('/forgotpassword', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'forgotpassword.html'));
+});
+app.get('/links', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'links.html'));
+});
+app.get('/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'profile.html'));
+});
+app.get('/resetpassword', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'resetpassword.html'));
+});
+app.get('/signin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'out', 'signin.html'));
+});
+
+app.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'signup.html'));
+});
+app.get('/credit', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'credit.html'));
+});
+
+app.get('/statistic/gpa', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'statistic', `gpa.html`));
+});
+
+app.get('/statistic/credit', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'statistic', `credit.html`));
+});
+
+app.get('/statistic/personal', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'statistic', `personal.html`));
+});
+
+app.get('/statistic/subject', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'statistic', `subject.html`));
+});
+
 // app.use('/statistic/gpa', express.static('./out'));
 // app.use('/statistic/credit', express.static('./out'));
 // app.use('/statistic/personal', express.static('./out'));
@@ -98,16 +109,30 @@ app.get('/settings/profile', (req, res) => {
 });
 // app.use('/settings/profile', express.static('./out'));
 
-app.get('/schedule/:suffix', (req, res) => {
-    let suffix = req.params.suffix;
-    res.sendFile(path.join(__dirname, 'out', 'schedule', `${suffix}.html`));
+app.get('/schedule/calendar', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'schedule', 'calendar.html'));
+});
+
+app.get('/schedule/exam', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'schedule', 'exam.html'));
+});
+
+app.get('/schedule/subject-class', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'schedule', 'subject-class.html'));
 });
 // app.use('/schedule/calendar', express.static('./out'));
 // app.use('/schedule/exam', express.static('./out'));
 // app.use('/schedule/subject-class', express.static('./out'));
-app.get('/mysubjects/:suffix', (req, res) => {
-    let suffix = req.params.suffix;
-    res.sendFile(path.join(__dirname, 'out', 'mysubjects', `${suffix}.html`));
+app.get('/mysubjects/curriculum', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'mysubjects', 'curriculum.html'));
+});
+
+app.get('/mysubjects/registered', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'mysubjects', 'registered.html'));
+});
+
+app.get('/mysubjects/semester', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'mysubjects', 'semester.html'));
 });
 
 // app.use('/mysubjects/curriculum', express.static('./out'));
@@ -121,9 +146,11 @@ app.get('/images', (req, res) => {
     res.sendFile(path.join(__dirname, 'out', 'images'));
 });
 // app.use('/images', express.static('./out'));
-app.get('/all-subjects/:suffix', (req, res) => {
-    let suffix = req.params.suffix;
-    res.sendFile(path.join(__dirname, 'out', 'all-subjects', `${suffix}.html`));
+app.get('/all-subjects/details', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'all-subjects', 'details.html'));
+});
+app.get('/all-subjects/documents', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', 'all-subjects', 'documents.html'));
 });
 
 // app.use('/all-subjects/details', express.static('./out'));
@@ -132,7 +159,9 @@ app.get('/all-subjects/documents/details', (req, res) => {
     res.sendFile(path.join(__dirname, 'out', 'all-subjects','documents' `details.html`));
 });
 // app.use('/all-subjects/documents/details', express.static('./out'));
-
+app.get('/_next', (req, res) => {
+    res.sendFile(path.join(__dirname, 'out', '_next'));
+});
 
 app.use('/', PageRouter);
 app.use('/', MajorRouter);
